@@ -13,7 +13,6 @@ export default function SignIn() {
         <div >
           <input placeholder="Name" className="joinInput" type="text" onChange={(event) => setName(event.target.value)} />
         </div>
-          {/*TODO: ROUTE HOST USERS TO HOST LOBBY*/}
           <Link onClick={e => (!name) ? e.preventDefault() : null} to={`/lobby?name=${name}`}>
           <button className={'button mt-20'} type="submit">Host</button>
           </Link>

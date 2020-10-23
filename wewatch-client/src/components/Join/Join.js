@@ -4,12 +4,9 @@ import queryString from 'query-string';
 
 import './Join.css';
 
-export default function SignIn() {
-  
-
+const Join = ({location}) => {
   const [room, setRoom] = useState('');
-  const { name } = queryString.parse(window.location.search);
-
+  const { name } = queryString.parse(location.search);
   return (
     <div className="joinOuterContainer">
       <div className="joinInnerContainer">
@@ -24,3 +21,5 @@ export default function SignIn() {
     </div>
   );
 }
+
+export default Join;

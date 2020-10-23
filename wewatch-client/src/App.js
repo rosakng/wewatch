@@ -7,7 +7,7 @@ import Landing from 'components/Landing/Landing';
 
 const App = () => (
   <Router>
-  <Route path='/' exact component={Landing} />
+    <Route path='/' exact component={Landing} />
     <Route path='/join' exact component={Join} />
     <Route path='/chat' component={Chat} />
   </Router>
