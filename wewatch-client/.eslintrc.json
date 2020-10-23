@@ -1,0 +1,35 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "browser": true,
+        "es6": true,
+        "jest": true
+    },
+    "extends": ["react-app", "airbnb"],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "settings": {
+        "import/resolver": {
+            "node": {
+            "moduleDirectory": ["node_modules", "src/"]
+            }
+        }
+    },
+    "rules": {
+        "react/jsx-filename-extension": "off",
+        "no-console": "warn",
+        "import/no-absolute-path": "off"
+    }
+}
