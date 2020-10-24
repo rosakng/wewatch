@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const { addUser, removeUser, getUsersInRoom } = require('./users');
+const { addUser, addHost, removeUser, getUsersInRoom } = require('./users');
 
 io.on('connection', (socket) => {
     // When a user disconnects from the socket, remove the user from the room and update the guest list
@@ -19,6 +19,20 @@ io.on('connection', (socket) => {
         if (user) {
             io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
         }
+    });
+
+    // TODO add a way for host identifier to be stored and broadcasted to room?
+    socket.on('create', ({ name }, callback) => {
+        const { error, user } = addHost({ id: socket.id, name });
+
+        if (error) return callback(error);
+
+        socket.join(user.room);
+
+        io.to(user.room).emit('roomCreation', { room: user.room, users: getUsersInRoom(user.room)});
+
+        callback();
+
     });
 
     // When a user joins a room, add the user to the room and update the room list

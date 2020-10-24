@@ -2,7 +2,7 @@ import React from 'react';
 
 import Chat from './components/Chat/Chat';
 import Join from './components/Join/Join';
-import Lobby from './lobby';
+import Lobby from './components/Lobby/Lobby';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
