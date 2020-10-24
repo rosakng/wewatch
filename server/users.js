@@ -1,20 +1,40 @@
+const { generateRoomId } = require('./utils')
 const users = [];
 
+// key: value => roomId: hostName
+const rooms = {}; 
+
 // Add user to room
-const addUser = ({ id, name, room }) => {
+const addUser = ({ id, name, room: roomId }) => {
   name = name.trim().toLowerCase();
-  room = room.trim().toLowerCase();
+  roomId = roomId.trim().toLowerCase();
 
-  const existingUser = users.find((user) => user.room === room && user.name === name);
-
-  if(!name || !room) return { error: 'Username and room are required.' };
+  const existingUser = users.find((user) => user.room === roomId && user.name === name);
+  
+  if(!name || !roomId) return { error: 'Username and room are required.' };
   if(existingUser) return { error: 'Username is taken.' };
 
-  const user = { id, name, room };
+  const user = { id, name, room: roomId };
 
   users.push(user);
 
   return { user };
+}
+
+// generate unique room ID, add host to list of users and add host
+const addHost = ({ id, name: hostName }) => {
+    hostName = hostName.trim().toLowerCase();
+
+    if (!hostName) return { error: 'Username required.' };
+
+    const roomId = generateRoomId()
+    const user = { id, name: hostName, room: roomId };
+
+    // Add user to user array, add room to room dict
+    users.push(user);
+    rooms[roomId] = hostName;
+
+    return { user };
 }
 
 // Remove user from room
@@ -27,4 +47,6 @@ const removeUser = (id) => {
 // Get all users in one room
 const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 
-module.exports = { addUser, removeUser, getUsersInRoom };
+const getHost = (roomId) => rooms[roomId]
+
+module.exports = { addUser, addHost, removeUser, getUsersInRoom, getHost };
