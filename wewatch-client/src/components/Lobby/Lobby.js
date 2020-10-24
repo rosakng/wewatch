@@ -27,11 +27,11 @@ const Lobby = ({location}) => {
                     alert(error);
                 }
             });
-            socket.on('roomCreation', ({ room , users}) => {
+            socket.on('roomCreation', ({ room , users, host}) => {
                 setRoomId(room)
                 setUsers(users)
+                setHostName(host)
             })
-            setHostName(name)
             setName(name);
         }
         else {
@@ -51,8 +51,9 @@ const Lobby = ({location}) => {
     }, [ENDPOINT, location.search]);
 
     useEffect(() => {
-        socket.on("roomData", ({ users }) => {
+        socket.on("roomData", ({ users, host }) => {
             setUsers(users);
+            setHostName(host);
         });
     }, []);
 

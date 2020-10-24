@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const { addUser, addHost, removeUser, getUsersInRoom } = require('./users');
+const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
 
 io.on('connection', (socket) => {
     // When a user disconnects from the socket, remove the user from the room and update the guest list
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
 
         socket.join(user.room);
 
-        io.to(user.room).emit('roomCreation', { room: user.room, users: getUsersInRoom(user.room)});
+        io.to(user.room).emit('roomCreation', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
 
         callback();
 
@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 
         socket.join(user.room);
 
-        io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
+        io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
 
         callback();
     });
