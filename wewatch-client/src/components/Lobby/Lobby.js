@@ -19,8 +19,9 @@ const Lobby = ({location}) => {
         socket = io(ENDPOINT);
 
         const { name, room } = queryString.parse(location.search);
-        
-        if (room === undefined){ // host user does not have room ID in query params
+
+        // host user does not have room ID in query params
+        if (room === undefined){ 
             socket.emit('create', { name }, (error) => {
                 if (error) {
                     alert(error);
@@ -59,7 +60,7 @@ const Lobby = ({location}) => {
         <div className="outerContainer">
             <div className="container">
                 <h1>Welcome to {hostName}'s Lobby</h1>
-                <h2>lobby ID: {roomId} </h2>
+                <h2>Lobby ID: {roomId} </h2>
                 <h2>In the lobby:</h2>
                 <ul>
                     {users.map(element => {
