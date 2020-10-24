@@ -21,7 +21,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // TODO add a way for host identifier to be stored and broadcasted to room?
     socket.on('create', ({ name }, callback) => {
         const { error, user } = addHost({ id: socket.id, name });
 
