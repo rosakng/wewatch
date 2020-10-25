@@ -2,16 +2,6 @@ import styled from 'styled-components';
 
 import theme from 'styles/theme';
 
-
-/**
- *
- * WARNING: Before changing this file, please strongly consider whether your change is
- * necessary (we want to avoid unexpected bugs in other views).
- * This code is meant to be shared by many views throughout our app and should not
- * contain logic specifc to how your view is using it.
- *
- */
-
 const flexbox = (props) => ({
   display: props.flex ? 'flex' : undefined,
   flexDirection: props.flexDirection,
