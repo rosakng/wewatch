@@ -17,6 +17,8 @@ export default {
       '#e9ecef', // 2
       '#dee2e6', // 3
     ],
+    green: '#58c659',
+    red: '#e70012',
   },
 
   font: {
