@@ -11,7 +11,7 @@ const addUser = ({ id, name, room: roomId }) => {
 
   if(!name || !roomId) return { error: 'Username and room are required.' };
   if(existingUser) return { error: 'Username is taken.' };
-  if(!existingRoom) return { error: 'Room does not exist'}; // test
+  if(!existingRoom) return { error: 'Room does not exist.' }; // test
 
   const user = { id, name, room: roomId };
 
