@@ -10,9 +10,11 @@ const addUser = ({ id, name, room: roomId }) => {
   roomId = roomId.trim().toLowerCase();
 
   const existingUser = users.find((user) => user.room === roomId && user.name === name);
-  
+  const existingRoom = rooms.Has(roomId); // test
+
   if(!name || !roomId) return { error: 'Username and room are required.' };
   if(existingUser) return { error: 'Username is taken.' };
+  if(!existingRoom) return { error: 'Room does not exist'}; // test
 
   const user = { id, name, room: roomId };
 
@@ -20,6 +22,7 @@ const addUser = ({ id, name, room: roomId }) => {
 
   return { user };
 }
+
 
 // generate unique room ID, add host to list of users and add host
 const addHost = ({ id, name: hostName }) => {
