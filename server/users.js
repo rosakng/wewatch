@@ -6,9 +6,6 @@ const rooms = {};
 
 // Add user to room
 const addUser = ({ id, name, room: roomId }) => {
-  name = name.trim().toLowerCase();
-  roomId = roomId.trim().toLowerCase();
-
   const existingUser = users.find((user) => user.room === roomId && user.name === name);
   
   if(!name || !roomId) return { error: 'Username and room are required.' };
@@ -23,8 +20,6 @@ const addUser = ({ id, name, room: roomId }) => {
 
 // generate unique room ID, add host to list of users and add host
 const addHost = ({ id, name: hostName }) => {
-    hostName = hostName.trim().toLowerCase();
-
     if (!hostName) return { error: 'Username required.' };
 
     const roomId = generateRoomId()
