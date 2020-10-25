@@ -65,7 +65,13 @@ const Lobby = ({location}) => {
                 <h2>In the lobby:</h2>
                 <ul>
                     {users.map(element => {
-                        return (<li>{element.name}</li>)
+                        if(element.name === name) {
+                            return (<li>{element.name + " (You)"}</li>)
+                        } else if (element.name === hostName) {
+                            return (<li>{element.name + " (Host)"}</li>)
+                        } else {
+                            return (<li>{element.name}</li>)
+                        }
                     })}
                 </ul>
                 {name === hostName 
