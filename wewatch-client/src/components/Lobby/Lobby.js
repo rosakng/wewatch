@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import './Lobby.css';
 
 // change to http://localhost:5000 for local development
+// change to https://wewatch-server.herokuapp.com/ for deployment
 const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
 
 let socket;
