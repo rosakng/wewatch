@@ -7,9 +7,11 @@ const rooms = {};
 // Add user to room
 const addUser = ({ id, name, room: roomId }) => {
   const existingUser = users.find((user) => user.room === roomId && user.name === name);
+  const existingRoom = rooms[roomId];
   
   if(!name || !roomId || !id) return { error: 'name, room, and socket id are required.' };
   if(existingUser) return { error: 'Username is taken.' };
+  if(!existingRoom) return { error: 'Room does not exist.' };
 
   const user = { id, name, room: roomId };
 

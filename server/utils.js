@@ -1,6 +1,8 @@
+const uniqid =require('uniqid');
+
 const generateRoomId = () => {
-    stubbedRoomId = 'ABCD'
-    return stubbedRoomId
+    randRoomId = uniqid.time();
+    return randRoomId
 }
 
 module.exports = {generateRoomId}
