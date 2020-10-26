@@ -9,7 +9,8 @@ import {
 import './Lobby.css';
 import SwipingContainer from 'views/swiping/swiping-container';
 
-const ENDPOINT = 'http://localhost:5000';
+// change to http://localhost:5000 for local development
+const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
 
 let socket;
 
