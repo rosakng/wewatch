@@ -22,10 +22,13 @@ const Lobby = ({location}) => {
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
+        console.log(users[0])
         socket.emit('begin', users[0], (error) => {
+            console.log('inside')
             if (error) {
                 alert(error);
             }
+            console.log('starting');
         })
     }
 

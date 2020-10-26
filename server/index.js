@@ -49,7 +49,8 @@ io.on('connection', (socket) => {
     });
 
     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
-    socket.on('begin', ({ user }, callback) => {
+    socket.on('begin', ( user , callback) => {
+        console.log('begin session signal received')
         io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
         callback();
     });
