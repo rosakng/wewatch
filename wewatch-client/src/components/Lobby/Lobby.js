@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import io from "socket.io-client";
-import { Link } from "react-router-dom";
+import {
+    Link,
+  } from 'react-router-dom';
 
+import history from 'router-history';
 import './Lobby.css';
 
 const ENDPOINT = 'http://localhost:5000';
 
 let socket;
+
+const onClickStartSession = () => {
+    socket = io(ENDPOINT);
+    socket.emit('startSession', (error) => {
+        if (error) {
+            alert(error);
+        }
+        console.log('starting')
+    })
+}
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -57,6 +70,12 @@ const Lobby = ({location}) => {
         });
     }, []);
 
+    useEffect(() => {
+        socket.on("sessionMembers", () => {
+            history.push(`/swiping?room=${roomId}`)
+        });
+    }, []);
+
     return (
         <div className="outerContainer">
             <div className="container">
@@ -77,7 +96,7 @@ const Lobby = ({location}) => {
                 {name === hostName 
                     ? 
                     <Link onClick={e => (!name) ? e.preventDefault() : null} to={`/swiping?room=${roomId}`}>
-                    <button className={'button mt-20'} type="submit">Start Session</button>
+                    <button className={'button mt-20'} type="submit" onClick={onClickStartSession}>Start Session</button>
                     </Link> 
                     :
                     <h2>Waiting for Host to start!</h2> 

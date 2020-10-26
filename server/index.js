@@ -46,6 +46,13 @@ io.on('connection', (socket) => {
 
         callback();
     });
+
+    socket.on('startSession', (callback) => {
+        console.log(1)
+        io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(room), host: getHost(user.room)});
+        callback();
+    });
+
 });
 
 app.use(router);
