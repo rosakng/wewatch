@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import './Landing.css';
 
-export default function SignIn() {
+function Landing() {
   const [name, setName] = useState('');
 
   return (
@@ -22,4 +22,6 @@ export default function SignIn() {
       </div>
     </div>
   );
-}
+  }
+
+export default Landing;
