@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import io from "socket.io-client";
-import {
-    Link,
-    Redirect
-  } from 'react-router-dom';
-  
+import { Redirect } from "react-router-dom";
+
 import './Lobby.css';
-import SwipingContainer from 'views/swiping/swiping-container';
 
 // change to http://localhost:5000 for local development
-const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
+const ENDPOINT = 'http://localhost:5000';
 
 let socket;
 
@@ -102,7 +98,7 @@ const Lobby = ({location}) => {
                 </ul>
                 {name === hostName 
                     ? 
-                    <button className={'button mt-20'} type="button" onClick={onClickStartSession}>Start Session</button>
+                    <button className={'button mt-20'} type="button" onClick={onClickStartSession}>Start Session</button> 
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }

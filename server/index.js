@@ -58,7 +58,6 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
         callback();
     });
-
 });
 
 server.listen(PORT, () => {
