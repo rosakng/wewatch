@@ -1,7 +1,6 @@
-const generateRoomId = () => {
-    //stubbedRoomId = 'ABCD' commented out just for now
-    var uniqid =require('uniqid');
+const uniqid =require('uniqid');
 
+const generateRoomId = () => {
     randRoomId = uniqid.time();
     return randRoomId
 }
