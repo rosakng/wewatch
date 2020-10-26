@@ -6,7 +6,7 @@ import { Redirect } from "react-router-dom";
 import './Lobby.css';
 
 // change to http://localhost:5000 for local development
-const ENDPOINT = 'http://localhost:5000';
+const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
 
 let socket;
 
