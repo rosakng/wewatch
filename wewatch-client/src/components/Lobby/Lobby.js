@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import io from "socket.io-client";
-import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import './Lobby.css';
 
@@ -16,6 +16,19 @@ const Lobby = ({location}) => {
     const [hostName, setHostName] = useState('');
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
+    const [goSwipe, setGoSwipe] = useState(false);
+
+    const onClickStartSession = () => {
+        // TODO emit a specific user instead of the first of the user array
+        console.log(users[0])
+        socket.emit('begin', users[0], (error) => {
+            console.log('inside')
+            if (error) {
+                alert(error);
+            }
+            console.log('starting');
+        })
+    }
 
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -59,6 +72,14 @@ const Lobby = ({location}) => {
         });
     }, []);
 
+    useEffect(() => {
+        // set boolean for redirecting to swipe screen to be true, renders redirect component
+        socket.on('sessionMembers', ({roomId, users, host}) => {
+            // TODO do something with the returned data
+            setGoSwipe(true);
+        });
+    }, []);
+
     return (
         <div className="outerContainer">
             <div className="container">
@@ -78,12 +99,11 @@ const Lobby = ({location}) => {
                 </ul>
                 {name === hostName 
                     ? 
-                    <Link onClick={e => (!name) ? e.preventDefault() : null} to={`/swiping?room=${roomId}`}>
-                    <button className={'button mt-20'} type="submit">Start Session</button>
-                    </Link> 
+                    <button className={'button mt-20'} type="button" onClick={onClickStartSession}>Start Session</button> 
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
+                { goSwipe ? <Redirect to='/swiping?room=${roomId}'/> : null }
             </div>
         </div>
     );

@@ -8,8 +8,8 @@ const rooms = {};
 const addUser = ({ id, name, room: roomId }) => {
   const existingUser = users.find((user) => user.room === roomId && user.name === name);
   const existingRoom = rooms[roomId];
-
-  if(!name || !roomId) return { error: 'Username and room are required.' };
+  
+  if(!name || !roomId || !id) return { error: 'name, room, and socket id are required.' };
   if(existingUser) return { error: 'Username is taken.' };
   if(!existingRoom) return { error: 'Room does not exist.' };
 
@@ -22,7 +22,7 @@ const addUser = ({ id, name, room: roomId }) => {
 
 // generate unique room ID, add host to list of users and add host
 const addHost = ({ id, name: hostName }) => {
-    if (!hostName) return { error: 'Username required.' };
+    if (!hostName || !id) return { error: 'Username required.' };
 
     const roomId = generateRoomId()
     const user = { id, name: hostName, room: roomId };
@@ -38,7 +38,11 @@ const addHost = ({ id, name: hostName }) => {
 const removeUser = (id) => {
     const index = users.findIndex((user) => user.id === id);
   
-    if(index !== -1) return users.splice(index, 1)[0];
+    if(index !== -1) {
+      return users.splice(index, 1)[0];
+    } else {
+      return [];
+    }
 }
 
 // Get all users in one room
@@ -46,4 +50,4 @@ const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 
 const getHost = (roomId) => rooms[roomId]
 
-module.exports = { addUser, addHost, removeUser, getUsersInRoom, getHost };
+module.exports = { addUser, addHost, removeUser, getUsersInRoom, getHost};
