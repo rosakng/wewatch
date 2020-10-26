@@ -22,6 +22,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('create', ({ name }, callback) => {
+        console.log('create request received')
         const { error, user } = addHost({ id: socket.id, name });
 
         if (error) return callback(error);
@@ -47,9 +48,9 @@ io.on('connection', (socket) => {
         callback();
     });
 
-    socket.on('startSession', (callback) => {
-        console.log(1)
-        io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(room), host: getHost(user.room)});
+    // received signal to start a session from the host of a room, emit redirect signal to all guests and host
+    socket.on('begin', ({ user }, callback) => {
+        io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
         callback();
     });
 
