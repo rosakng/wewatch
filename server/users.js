@@ -20,7 +20,6 @@ const addUser = ({ id, name, room: roomId }) => {
   return { user };
 }
 
-
 // generate unique room ID, add host to list of users and add host
 const addHost = ({ id, name: hostName }) => {
     if (!hostName) return { error: 'Username required.' };
