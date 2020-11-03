@@ -1,20 +1,14 @@
-// TODO: flesh out container that will dispatch actions
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 
 import theme from 'styles/theme'
-import fetchMovies from 'store/movies/actions'
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 import inception from 'views/swiping/assets/Inception.png';
 
 
 const SwipingContainer = () => {
-  // const dispatch = useDispatch();
-  // dispatch(fetchMovies)
-
   return (
     <StyledDiv paddingLeft="512">
       <StyledDiv width="30%" flex alignItems="center">
