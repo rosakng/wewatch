@@ -6,8 +6,12 @@ import { Redirect } from "react-router-dom";
 import './Lobby.css';
 
 // change to http://localhost:5000 for local development
+const ENDPOINT  = 'http://localhost:5000';
+
 // change to https://wewatch-server.herokuapp.com/ for production deployment
-const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
+// const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
+
+
 
 let socket;
 
@@ -74,8 +78,9 @@ const Lobby = ({location}) => {
 
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
-        socket.on('sessionMembers', ({roomId, users, host}) => {
+        socket.on('sessionMembers', ({roomId, users, host, top10}) => {
             // TODO do something with the returned data
+            console.log(top10)
             setGoSwipe(true);
         });
     }, []);

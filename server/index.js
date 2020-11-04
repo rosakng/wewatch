@@ -3,6 +3,8 @@ const socketio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 
+require('dotenv').config()
+
 const PORT = process.env.PORT || 5000;
 
 const router = require("./router");
@@ -15,6 +17,7 @@ app.use(router);
 app.use(cors());
 
 const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
+const { getTop10 } = require('./movies');
 
 io.on('connection', (socket) => {
     // When a user disconnects from the socket, remove the user from the room and update the guest list
@@ -54,7 +57,12 @@ io.on('connection', (socket) => {
     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
     socket.on('begin', ( user , callback) => {
         console.log('begin session signal received')
-        io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
+
+        // get list of top 10 movies to send to all guests of the room
+        console.log('getting top 10')
+        getTop10().then((top10) => {
+            io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
+        });
         callback();
     });
 });
