@@ -22,10 +22,10 @@ const initializeRoom = (roomId, numGuests, movies) => {
     });
 }
 
-// initializeRoom('abc', 7, [{id: 1}, {id: 2}]);
+// initializeRoom('abc', 3, [{id: 1}, {id: 2}]);
 
 // on user likes movie
-const likeEvent = (roomId, movie) => {
+const likeEvent = async(roomId, movie) => {
     client.hincrby(roomId, movie, 1, (err, res) => {
         if(err) {
             console.log("ERROR likeEvent() " + err);
@@ -35,14 +35,21 @@ const likeEvent = (roomId, movie) => {
     client.hincrby(roomId, "total_swipes", 1, (err, res) => {
         if(err) {
             console.log("ERROR likeEvent() " + err);
-            return false;
         } 
     });
 
-    // if match ? return movie id
+    const movie_like_count = await hgetAsync(roomId, movie);
+    const num_guests = await hgetAsync(roomId, "numUsers");
+    if(movie_like_count == num_guests) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-// likeEvent('abc', 1);
+likeEvent('abc', 1).then((e)=> {
+    console.log(e)
+})
 
 // on user dislikes movie
 const dislikeEvent = (roomId) => {
