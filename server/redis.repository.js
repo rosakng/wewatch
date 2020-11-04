@@ -42,8 +42,6 @@ const likeEvent = async (roomId, movie) => {
     const num_guests = await hgetAsync(roomId, "numUsers");
     const num_movies = await hgetAsync(roomId, "numMovies");
 
-    console.log(total_swipes, movie_likes, parseInt(num_guests), parseInt(num_movies));
-
     if (movie_likes === parseInt(num_guests)) {
         return 0;
     } else if (total_swipes === parseInt(num_guests) * parseInt(num_movies)) {
