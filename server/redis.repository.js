@@ -81,4 +81,4 @@ const dislikeEvent = (roomId) => {
 //     console.log(res);
 // })
 
-module.exports = { initializeRoom, likeEvent, dislikeEvent, getTotal };
+module.exports = { initializeRoom, likeEvent, dislikeEvent };
