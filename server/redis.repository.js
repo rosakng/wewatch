@@ -2,75 +2,83 @@ const redis = require("redis");
 const { promisify } = require("util");
 const client = redis.createClient();
 const hgetAsync = promisify(client.hget).bind(client);
+const hincrAsync = promisify(client.hincrby).bind(client);
+const hsetAsync = promisify(client.hset).bind(client);
 
-
-// on host start
-const initializeRoom = (roomId, numGuests, movies) => {
-    let roomArgs = ["numUsers", numGuests, "total_swipes", 0];
+/**
+ * Creates a room key in Redis and sets:
+ *      1. the number of movies
+ *      2. the number of guests
+ *      3. the number of total swipes to 0
+ * 
+ * @param {String} roomId - The room ID.
+ * @param {Integer} numGuests - The number of guests in the room, including the host
+ * @param {Object[]} movies - The list of movies with the respective movie Ids
+ * @returns {Integer} x - Number of fields sets (No errors if greater than 0)
+ */
+const initializeRoom = async(roomId, numGuests, movies) => {
+    let roomArgs = ["numUsers", numGuests, "total_swipes", 0, "numMovies", movies.length];
     movies.forEach(element => {
         roomArgs.push(element.id);
         roomArgs.push(0);
     });
 
-    client.hset(roomId, roomArgs, (err, res) => {
-        if(err) {
-            console.log("ERROR initializeRoom() " + err);
-            return false;
-        } else {
-            return true;
-        }
-    });
+    return await hsetAsync(roomId, roomArgs);
 }
 
-// initializeRoom('abc', 3, [{id: 1}, {id: 2}]);
+// Test
+// initializeRoom('abc', 3, [{id: 1}, {id: 2}]).then((res) => {
+//     console.log(res);
+// })
 
-// on user likes movie
+/**
+ * Increments total_swipes and number of likes for movie. Also checks if match or if swiping completed. 
+ * 
+ * @param {String} roomId - The room ID.
+ * @param {Integer} movie - Movie ID
+ * @returns {Integer} 0 - If match found for movie ID passed in.
+ * @returns {Integer} 1 - If no match found but swiping completed. 
+ * @returns {Integer} -1 - If no match found and swiping not completed. 
+ */
 const likeEvent = async(roomId, movie) => {
-    client.hincrby(roomId, movie, 1, (err, res) => {
-        if(err) {
-            console.log("ERROR likeEvent() " + err);
-        } 
-    });
+    const total_swipes = hincrAsync(roomId, "total_swipes", 1);
+    const movie_likes = await hincrAsync(roomId, movie, 1);
 
-    client.hincrby(roomId, "total_swipes", 1, (err, res) => {
-        if(err) {
-            console.log("ERROR likeEvent() " + err);
-        } 
-    });
-
-    const movie_like_count = await hgetAsync(roomId, movie);
     const num_guests = await hgetAsync(roomId, "numUsers");
-    if(movie_like_count == num_guests) {
-        return true;
-    } else {
-        return false;
-    }
+    const num_movies = await hgetAsync(roomId, "numMovies");
+    if(movie_likes == num_guests) {
+        return 0;
+    } else if(total_swipes == num_guests * num_movies) {
+        return 1;
+    } 
+
+    return -1;
 }
 
-likeEvent('abc', 1).then((e)=> {
-    console.log(e)
-})
-
-// on user dislikes movie
-const dislikeEvent = (roomId) => {
-    client.hincrby(roomId, "total_swipes", 1, (err, res) => {
-        if(err) {
-            console.log("ERROR dislikeEvent() " + err);
-            return false;
-        } else {
-            return true;
-        }
-    });
-}
-
-// dislikeEvent('abc', 1);
-const getTotal = async (roomId) => {
-    const count = await hgetAsync(roomId, "total_swipes");
-    return count;
-}
-
-// getTotal('abc').then((count) => {
-//     console.log(count);
+// Test
+// likeEvent('abc', 1, (res) => {
+//     console.log(res);
 // });
+
+/**
+ * Increments total_swipes and checks if swiping completed. 
+ * 
+ * @param {String} roomId - The room ID.
+ * @returns {Integer} 1 - If swiping completed. 
+ * @returns {Integer} -1 - If swiping not completed.
+ */
+const dislikeEvent = (roomId) => {
+    const total_swipes = hincrAsync(roomId, "total_swipes", 1);
+    const num_movies = await hgetAsync(roomId, "numMovies");
+    if(total_swipes == num_guests * num_movies) {
+        return 1;
+    } 
+    return -1;
+}
+
+// Test
+// dislikeEvent('abc',(res) => {
+//     console.log(res);
+// })
 
 module.exports = { initializeRoom, likeEvent, dislikeEvent, getTotal };
