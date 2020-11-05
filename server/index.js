@@ -69,6 +69,15 @@ io.on('connection', (socket) => {
         });
         callback();
     });
+
+    //received signal to end the session with no matches, emit redirect signal to all guests and host
+    socket.on('noMatch', (room, callback) => {
+        console.log('no match signal received')
+        console.log(getHost(room))
+        console.log(room)
+        io.to(room).emit('noMatchRedirect');
+        callback();
+    })
 });
 
 server.listen(PORT, () => {

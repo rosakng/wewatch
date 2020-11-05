@@ -9,9 +9,7 @@ import './Lobby.css';
 const ENDPOINT  = 'http://localhost:5000';
 
 // change to https://wewatch-server.herokuapp.com/ for production deployment
-// const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
-
-
+const ENDPOINT = 'http://localhost:5000';
 
 let socket;
 
@@ -21,6 +19,8 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
+
+    const [goNoMatch, setGoNoMatch] = useState(false);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -34,11 +34,18 @@ const Lobby = ({location}) => {
         })
     }
 
+    const nomatchtest = () =>{
+        socket.emit('noMatch', roomId, (error) => {
+            if (error) {
+                alert(error);
+            }
+        })
+      }
+
     useEffect(() => {
         socket = io(ENDPOINT);
-
         const { name, room } = queryString.parse(location.search);
-
+        console.log(name)
         // host user does not have room ID in query params
         if (room === undefined){ 
             socket.emit('create', { name }, (error) => {
@@ -78,16 +85,27 @@ const Lobby = ({location}) => {
 
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
-        socket.on('sessionMembers', ({roomId, users, host, top10}) => {
+        socket.on('sessionMembers', ({roomId, users, host}) => {
+            console.log("inside session members");
             // TODO do something with the returned data
             console.log(top10)
             setGoSwipe(true);
         });
     }, []);
 
+    useEffect(() => {
+        socket.on('noMatchRedirect', () => {
+            console.log("lobby success")
+            setGoNoMatch(true);
+      });
+    }, []);
+
+
     return (
         <div className="outerContainer">
             <div className="container">
+            <button onClick={nomatchtest}>test</button>
+            { goNoMatch ? <Redirect to='/noMatch'/> : null }
                 <h1>Welcome to {hostName}'s Lobby</h1>
                 <h2>Lobby ID: {roomId} </h2>
                 <h2>In the lobby:</h2>
@@ -108,7 +126,8 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                { goSwipe ? <Redirect to='/swiping?room=${roomId}'/> : null }
+                { goSwipe ? <Redirect to={`/swiping?room=${roomId}&name=${name}`}/> : null }
+
             </div>
         </div>
     );
