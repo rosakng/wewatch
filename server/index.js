@@ -61,7 +61,11 @@ io.on('connection', (socket) => {
         // get list of top 10 movies to send to all guests of the room
         console.log('getting top 10')
         getTop10().then((top10) => {
+            // TODO add call to redis to initialize swiping room here
             io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
+        }).catch((error) => {
+            console.log('error getting list of top 10 movies from rapidapi')
+            callback(error);
         });
         callback();
     });

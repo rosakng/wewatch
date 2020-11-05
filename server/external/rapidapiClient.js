@@ -33,6 +33,7 @@ const getTop10 = () => {
       return top10
     }).catch(function (error) {
       console.error(error);
+      return error
     });
 }
 
