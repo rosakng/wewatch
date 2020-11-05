@@ -2,7 +2,7 @@ const redis = require("redis");
 const { promisify } = require("util");
 const client = redis.createClient();
 const hgetAsync = promisify(client.hget).bind(client);
-const hincrAsync = promisify(client.hincrby).bind(client);
+const hincrbyAsync = promisify(client.hincrby).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
 
 /**
@@ -17,12 +17,14 @@ const hsetAsync = promisify(client.hset).bind(client);
  * @returns {Integer} x - Number of fields sets (No errors if greater than 0)
  */
 const initializeRoom = async (roomId, numGuests, movies) => {
+    if(!roomId || !movies || !numGuests) {
+        return Promise.reject('Fields were passed in that were null.')
+    }
     let roomArgs = ["numUsers", numGuests, "total_swipes", 0, "numMovies", movies.length];
     movies.forEach(element => {
         roomArgs.push(element.id);
         roomArgs.push(0);
     });
-
     return await hsetAsync(roomId, roomArgs);
 }
 
@@ -36,15 +38,18 @@ const initializeRoom = async (roomId, numGuests, movies) => {
  * @returns {Integer} -1 - If no match found and swiping not completed. 
  */
 const likeEvent = async (roomId, movie) => {
-    const total_swipes = await hincrAsync(roomId, "total_swipes", 1);
-    const movie_likes = await hincrAsync(roomId, movie, 1);
+    if(!roomId || !movie) {
+        return Promise.reject('Fields were passed in that were null.')
+    }
+    const total_swipes = await hincrbyAsync(roomId, "total_swipes", 1);
+    const movie_likes = await hincrbyAsync(roomId, movie, 1);
 
     const num_guests = await hgetAsync(roomId, "numUsers");
     const num_movies = await hgetAsync(roomId, "numMovies");
 
     if (movie_likes === parseInt(num_guests)) {
         return 0;
-    } else if (total_swipes === parseInt(num_guests) * parseInt(num_movies)) {
+    } else if (swipingCompleted(total_swipes, parseInt(num_guests), parseInt(num_movies))) {
         return 1;
     }
     return -1;
@@ -58,22 +63,33 @@ const likeEvent = async (roomId, movie) => {
  * @returns {Integer} -1 - If swiping not completed.
  */
 const dislikeEvent = async (roomId) => {
-    const total_swipes = await hincrAsync(roomId, "total_swipes", 1);
+    if(!roomId) {
+        return Promise.reject('Room ID was empty or null.')
+    }
+
+    const total_swipes = await hincrbyAsync(roomId, "total_swipes", 1);
     const num_movies = await hgetAsync(roomId, "numMovies");
     const num_guests = await hgetAsync(roomId, "numUsers");
-    if (total_swipes === parseInt(num_guests) * parseInt(num_movies)) {
+    if (swipingCompleted(total_swipes, parseInt(num_guests), parseInt(num_movies))) {
         return 1;
     }
     return -1;
 }
 
-// Test
-// initializeRoom('abc', 3, [{id: 1}, {id: 2}]).then((res) => {console.log(res);})
-
-// Test
-// likeEvent('abc', 1).then((res) => {console.log(res)});
-
-// Test
-// dislikeEvent('abc').then((res) => {console.log(res);});
+/**
+ * Private function to validate if swiping is completed for room. 
+ * 
+ * @param {Integer} total_swipes - Total swipes in the room by all guests.
+ * @param {Integer} num_guests - Total number of guests in the room.
+ * @param {Integer} num_movies - Total number of movies in the room.
+ * @returns {Boolean} Returns true if swiping has completed, otherwise returns false.
+ */
+const swipingCompleted = (total_swipes, num_guests, num_movies) => {
+    if(total_swipes === num_guests * num_movies) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 module.exports = { initializeRoom, likeEvent, dislikeEvent };
