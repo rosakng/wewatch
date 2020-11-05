@@ -16,12 +16,12 @@ const MovieDetailContainer = styled.div`
 `;
 const Title = styled.span`
   font-size: ${theme.font.size[4]};
-  margin: ${theme.space[3]};
+  margin: ${theme.space[2]};
 `;
 
 const DetailText = styled.span`
   font-size: ${theme.font.size[3]};
-  margin: ${theme.space[4]};
+  margin: ${theme.space[1]};
   `;
 
 const PhotoContainer = styled.div`
@@ -29,8 +29,8 @@ const PhotoContainer = styled.div`
 `;
 
 const Image = styled.img`
-  width: 100%;
   box-shadow: 0 0 10px #ccc;
+  width: 100%
 `;
 
 const MovieDetail = ({
@@ -39,12 +39,12 @@ const MovieDetail = ({
   year,
   genre,
   lengthOfMovie,
-  image,
+  imageURL,
   description,
 }) => (
   <MovieDetailContainer>
     <PhotoContainer>
-      <Image src={image} />
+      <Image src={imageURL} />
     </PhotoContainer>
     <StyledDiv paddingVertical={4}>
       <Title>{title}</Title>
@@ -73,7 +73,7 @@ const MovieDetail = ({
       </StyledDiv>
       <DetailText>{lengthOfMovie}</DetailText>
     </StyledDiv>
-    <StyledDiv margin={2} paddingTop={4}>
+    <StyledDiv margin={2} paddingTop={2}>
       <DetailText>{description}</DetailText>
     </StyledDiv>
   </MovieDetailContainer>
