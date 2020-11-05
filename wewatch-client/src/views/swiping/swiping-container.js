@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
@@ -8,6 +8,16 @@ import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = () => {
+
+  const [title, setTitle] = useState('Inception')
+
+  const onClickDislike = () => {
+    console.log("dislike");
+  }
+  const onClickLike = () => {
+    console.log("like");
+    setTitle("Monkey");
+  }
   return (
     <Container>
     <Row>
@@ -15,10 +25,11 @@ const SwipingContainer = () => {
       <StyledDiv flex alignItems="center" marginTop={2}>
         <CloseIcon
           style={{ color: theme.colors.red, fontSize: '60px'}}
+          onClick={onClickDislike}
         />
         <StyledDiv padding={2}>
           <MovieDetail
-            title="Inception"
+            title={title}
             year="2016"
             lengthOfMovie="2h 28m"
             rating="8/10"
@@ -30,6 +41,7 @@ const SwipingContainer = () => {
         <InsertEmoticonIcon
           style={{ color: theme.colors.green, fontSize: '60px'}}
           fontSize="large"
+          onClick={onClickLike}
         />
         </StyledDiv>
       </Col>
