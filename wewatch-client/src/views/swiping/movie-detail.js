@@ -13,7 +13,6 @@ const MovieDetailContainer = styled.div`
   line-height: 1.0;
   border: 1px ${theme.colors.black} solid;
   border-radius: ${theme.borderRadius};
-  display: inline-block;
 `;
 const Title = styled.span`
   font-size: ${theme.font.size[4]};
@@ -21,7 +20,7 @@ const Title = styled.span`
 `;
 
 const DetailText = styled.span`
-  font-size: ${theme.font.size[4]};
+  font-size: ${theme.font.size[3]};
   margin: ${theme.space[4]};
   `;
 
@@ -50,26 +49,26 @@ const MovieDetail = ({
     <StyledDiv paddingVertical={4}>
       <Title>{title}</Title>
     </StyledDiv>
-    <StyledDiv flex>
-      <StyledDiv size={50} margin={2}>
+    <StyledDiv flex alignItems="center">
+      <StyledDiv size={35} margin={2}>
         <GraphIcon />
       </StyledDiv>
       <DetailText>{rating}</DetailText>
     </StyledDiv>
-    <StyledDiv flex>
-      <StyledDiv size={50} margin={2}>
+    <StyledDiv flex alignItems="center">
+      <StyledDiv size={35} margin={2}>
         <CalendarIcon />
       </StyledDiv>
       <DetailText>{year}</DetailText>
     </StyledDiv>
-    <StyledDiv flex>
-      <StyledDiv size={50} margin={2} paddingTop={3}>
+    <StyledDiv flex alignItems="center" paddingTop={3}>
+      <StyledDiv size={35} margin={2}>
         <PaintBrushIcon />
       </StyledDiv>
       <DetailText>{genre}</DetailText>
     </StyledDiv>
-    <StyledDiv flex>
-      <StyledDiv size={50} margin={2} paddingTop={3}>
+    <StyledDiv flex alignItems="center">
+      <StyledDiv size={35} margin={2}>
         <ClockIcon />
       </StyledDiv>
       <DetailText>{lengthOfMovie}</DetailText>
