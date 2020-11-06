@@ -22,7 +22,7 @@ const initializeRoom = async (roomId, numGuests, movies) => {
     }
     let roomArgs = ["numUsers", numGuests, "total_swipes", 0, "numMovies", movies.length];
     movies.forEach(element => {
-        roomArgs.push(element.id);
+        roomArgs.push(element['netflixid']);
         roomArgs.push(0);
     });
     return await hsetAsync(roomId, roomArgs);
