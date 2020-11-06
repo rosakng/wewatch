@@ -52,7 +52,6 @@ const Lobby = ({location}) => {
       }
 
     useEffect(() => {
-        socket = io(ENDPOINT);
         const { name, room } = queryString.parse(location.search);
         console.log(name)
         // host user does not have room ID in query params
@@ -95,6 +94,7 @@ const Lobby = ({location}) => {
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host}) => {
+            console.log(socket)
             console.log("inside session members");
             // TODO do something with the returned data
             console.log(top10)
@@ -109,7 +109,7 @@ const Lobby = ({location}) => {
       });
     }, []);
 
-
+    if (!goSwipe){
     return (
         <div className="outerContainer">
             <div className="container">
@@ -135,7 +135,7 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                { goSwipe ? <Redirect to={`/swiping?room=${roomId}&name=${name}`}/> : null }
+   
 
             </div>
         </div>
