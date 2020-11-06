@@ -8,15 +8,29 @@ import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = () => {
+  const [index, setIndex] = useState('0');
+  const [title, setTitle] = useState(top10[index].title);
+  const [released, setReleased] = useState(top10[index].released);
+  const [runtime, setRuntime] = useState(top10[index].runtime);
+  const [rating, setRating] = useState(top10[index].rating);
+  const [image, setImage] = useState(top10[index].image);
 
-  const [title, setTitle] = useState('Inception')
-
+  const iterateMovies = () => {
+    setIndex(index + 1);
+    setTitle(top10[index].title);
+    setReleased(top10[index].released);
+    setRuntime(top10[index].runtime);
+    setRating(top10[index].rating);
+    setImage(top10[index].image);
+  }
+  
   const onClickDislike = () => {
+    iterateMovies();
     console.log("dislike");
   }
   const onClickLike = () => {
+    iterateMovies();
     console.log("like");
-    setTitle("Monkey");
   }
   return (
     <Container>
@@ -30,11 +44,11 @@ const SwipingContainer = () => {
         <StyledDiv padding={2}>
           <MovieDetail
             title={title}
-            year="2016"
-            lengthOfMovie="2h 28m"
-            rating="8/10"
+            year={rating}
+            lengthOfMovie={runtime}
+            rating={rating}
             genre="Thriller"
-            imageURL="https://2.bp.blogspot.com/_Iau3R3yMIr4/TMBDGzcvwSI/AAAAAAAACbQ/77grl8TYdK4/s1600/inception1.jpg"
+            imageURL={image}
             description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
           />
         </StyledDiv>
