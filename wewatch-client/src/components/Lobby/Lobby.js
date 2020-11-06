@@ -4,16 +4,7 @@ import io from "socket.io-client";
 import { Redirect } from "react-router-dom";
 
 import './Lobby.css';
-
-// change to http://localhost:5000 for local development
-const ENDPOINT  = 'http://localhost:5000';
-
-// change to https://wewatch-server.herokuapp.com/ for production deployment
-// const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
-
-
-
-let socket;
+import socket from 'Socket'
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -35,8 +26,6 @@ const Lobby = ({location}) => {
     }
 
     useEffect(() => {
-        socket = io(ENDPOINT);
-
         const { name, room } = queryString.parse(location.search);
 
         // host user does not have room ID in query params
@@ -67,7 +56,7 @@ const Lobby = ({location}) => {
         return () => {
             socket.close();
         }
-    }, [ENDPOINT, location.search]);
+    }, [location.search]);
 
     useEffect(() => {
         socket.on("roomData", ({ users, host }) => {

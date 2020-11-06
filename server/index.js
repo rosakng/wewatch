@@ -69,6 +69,11 @@ io.on('connection', (socket) => {
         });
         callback();
     });
+
+     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
+     socket.on('I am emitted from an imported socket!', () => {
+        console.log('successfully received emit from imported socket in swiping page')
+    });
 });
 
 server.listen(PORT, () => {

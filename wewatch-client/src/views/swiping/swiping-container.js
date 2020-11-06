@@ -7,8 +7,13 @@ import theme from 'styles/theme'
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
+import socket from 'Socket'
+
 const SwipingContainer = () => {
 
+  // test emit to be replaced by swiping actions
+  socket.emit('I am emitted from an imported socket!')
+  
   const [title, setTitle] = useState('Inception')
 
   const onClickDislike = () => {
