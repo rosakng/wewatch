@@ -3,16 +3,10 @@ import queryString from 'query-string';
 import io from "socket.io-client";
 import { Redirect } from "react-router-dom";
 
-import CloseIcon from '@material-ui/icons/Close';
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
-import theme from 'styles/theme'
-import StyledDiv from 'styles/styled-div';
-import MovieDetail from 'views/swiping/movie-detail.js';
-import inception from 'views/swiping/assets/Inception.png';
+//Components
+import NoMatch from 'components/No Match/noMatch'; 
+import Swiping from 'views/swiping/swiping-container';
 
-import './Lobby.css';
-
-// change to http://localhost:5000 f or local development
 // change to https://wewatch-server.herokuapp.com/ for production deployment
 const ENDPOINT = 'http://localhost:5000';
 
@@ -24,7 +18,6 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [page, setPage] = useState('Lobby')
-    const [cancel, setCancel] = useState(false);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -48,7 +41,6 @@ const Lobby = ({location}) => {
 
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
-        console.log(name)
         // host user does not have room ID in query params
         if (room === undefined){ 
             socket.emit('create', { name }, (error) => {
@@ -89,7 +81,6 @@ const Lobby = ({location}) => {
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host}) => {
-            console.log("inside session members");
             // TODO do something with the returned data
             setPage('Swiping');
         });
@@ -97,15 +88,10 @@ const Lobby = ({location}) => {
 
     useEffect(() => {
         socket.on('noMatchRedirect', () => {
-            console.log("lobby success")
             setPage('NoMatch')
       });
     }, []);
 
-    //takes user back to landing page
-    const cancelSession = () => {
-        setCancel(true);
-    }
 
     //MAIN PAGES
     function LobbyPage(props) {
@@ -137,52 +123,12 @@ const Lobby = ({location}) => {
         ); 
     }
 
-    function NoMatch() {
-        return (
-            <div className="noMatchHeroContainer">
-            { cancel ? <Redirect to='/'/> : null }
-                <h1>No Match :(</h1>
-                <h2>There were no movies that the group agreed on watching </h2>
-                <div className="buttonContainer">
-                <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
-                </div>
-            </div>
-        );
-    }
-
-    function Swiping(props){
-        console.log(props)
-        return( <StyledDiv paddingLeft="512">
-        <StyledDiv width="30%" flex alignItems="center">
-        <button onClick={nomatchtest}>test</button>
-        <CloseIcon
-          style={{ color: theme.colors.green }}
-          fontSize="large"
-        />
-        <MovieDetail
-          title="Inception"
-          year="2016"
-          lengthOfMovie="2h 28m"
-          rating="8/10"
-          genre="Thriller"
-          image={inception}
-          description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
-        />
-        <InsertEmoticonIcon
-          style={{ color: theme.colors.red }}
-          fontSize="large"
-        />
-        </StyledDiv>
-      </StyledDiv>)
-    }
-
     if (page == "Lobby"){
         return <LobbyPage/>;
     } else if (page == "Swiping") {
-        return <Swiping data = {{movieTitle: 'Xd', rating: '10'}}/>;
+        return (<div><button onClick={nomatchtest}>No Match test (will be removed)</button><Swiping/></div>);
     } else if (page == "NoMatch") {
         return <NoMatch/>;
-    }
-  }
+    }}
 
-  export default Lobby
+    export default Lobby
