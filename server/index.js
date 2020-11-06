@@ -69,6 +69,11 @@ io.on('connection', (socket) => {
         });
         callback();
     });
+
+    // test to see if receive signal from the same connection
+    socket.on('emitting from swipe page, i am an imported socket', () => {
+        console.log('successfully received emit from same connection in swiping room')
+    } )
 });
 
 server.listen(PORT, () => {

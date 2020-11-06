@@ -7,11 +7,12 @@ import { Redirect } from "react-router-dom";
 import theme from 'styles/theme'
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
+import socket from '../../Socket'
 
-
-let socket;
 
 const SwipingContainer = (props) => {
+
+  // const socket = props.location.state.socket
 
   const [title, setTitle] = useState('Inception')
   const [goMatch, setGoMatch] = useState(false);
@@ -28,13 +29,8 @@ const SwipingContainer = (props) => {
     setGoMatch(true);
   }
 
-  useEffect(()=>{
-    socket = props.location.state.socket
-    socket.emit('emitting from swipe page, i am a passed socket')
-
-
-  });
   console.log(props)
+  socket.emit('emitting from swipe page, i am an imported socket')
   return (
     <Container>
     <Row>

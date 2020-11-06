@@ -5,6 +5,8 @@ import { Redirect } from "react-router-dom";
 
 import './Lobby.css';
 
+import socket from '../../Socket'
+
 // change to http://localhost:5000 for local development
 const ENDPOINT  = 'http://localhost:5000';
 
@@ -13,7 +15,7 @@ const ENDPOINT  = 'http://localhost:5000';
 
 
 
-let socket;
+// let socket = io(ENDPOINT);
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -41,7 +43,7 @@ const Lobby = ({location}) => {
     }
 
     useEffect(() => {
-        socket = io(ENDPOINT);
+        // socket = io(ENDPOINT);
 
         const { name, room } = queryString.parse(location.search);
 
@@ -120,7 +122,7 @@ const Lobby = ({location}) => {
                 { goSwipe ? <Redirect to={{ 
                                 pathname: '/swiping',
                                 search:'?room=${roomId}',
-                                state: {top10: top10, socket: socket}
+                                state: {top10: top10}
                             }}
                             /> : null }
                 {/* { goMatch ? <Redirect to={{ 
@@ -134,3 +136,4 @@ const Lobby = ({location}) => {
   }
 
   export default Lobby
+  

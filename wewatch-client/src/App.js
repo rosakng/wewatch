@@ -16,7 +16,7 @@ const App = () => {
       <Route path='/join' exact component={Join} />
       <Route path="/chat" component={Chat} />
       <Route path="/lobby" component={Lobby}/>
-      <Route path="/swiping" component={Swiping}/>
+      <Route path="/swiping" render={ (props) => <Swiping {...props}/> }/>
       <Route path="/match" component={Match}/>
     </Router>
   );
