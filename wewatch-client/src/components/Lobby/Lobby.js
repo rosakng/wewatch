@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import io from "socket.io-client";
 import { Redirect } from "react-router-dom";
+import Swiping from 'views/swiping/swiping-container';
+
+import CloseIcon from '@material-ui/icons/Close';
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
+import theme from 'styles/theme'
+import StyledDiv from 'styles/styled-div';
+import MovieDetail from 'views/swiping/movie-detail.js';
+import inception from 'views/swiping/assets/Inception.png';
 
 import './Lobby.css';
 
@@ -11,7 +19,8 @@ const ENDPOINT  = 'http://localhost:5000';
 // change to https://wewatch-server.herokuapp.com/ for production deployment
 const ENDPOINT = 'http://localhost:5000';
 
-let socket;
+let socket = io(ENDPOINT);
+console.log(socket);
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -43,7 +52,6 @@ const Lobby = ({location}) => {
       }
 
     useEffect(() => {
-        socket = io(ENDPOINT);
         const { name, room } = queryString.parse(location.search);
         console.log(name)
         // host user does not have room ID in query params
@@ -86,6 +94,7 @@ const Lobby = ({location}) => {
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host}) => {
+            console.log(socket)
             console.log("inside session members");
             // TODO do something with the returned data
             console.log(top10)
@@ -100,7 +109,7 @@ const Lobby = ({location}) => {
       });
     }, []);
 
-
+    if (!goSwipe){
     return (
         <div className="outerContainer">
             <div className="container">
@@ -126,11 +135,35 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                { goSwipe ? <Redirect to={`/swiping?room=${roomId}&name=${name}`}/> : null }
+   
 
             </div>
         </div>
-    );
+    );} else {
+        return( <StyledDiv paddingLeft="512">
+        <StyledDiv width="30%" flex alignItems="center">
+        <button onClick={nomatchtest}>test</button>
+        { goNoMatch ? <Redirect to='/noMatch'/> : null }
+        <CloseIcon
+          style={{ color: theme.colors.green }}
+          fontSize="large"
+        />
+        <MovieDetail
+          title="Inception"
+          year="2016"
+          lengthOfMovie="2h 28m"
+          rating="8/10"
+          genre="Thriller"
+          image={inception}
+          description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
+        />
+        <InsertEmoticonIcon
+          style={{ color: theme.colors.red }}
+          fontSize="large"
+        />
+        </StyledDiv>
+      </StyledDiv>)
+    }
   }
 
   export default Lobby
