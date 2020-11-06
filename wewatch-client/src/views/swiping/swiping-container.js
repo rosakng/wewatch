@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
+import { Redirect } from "react-router-dom";
 
 import theme from 'styles/theme'
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
-const SwipingContainer = () => {
+
+let socket;
+
+const SwipingContainer = (props) => {
 
   const [title, setTitle] = useState('Inception')
+  const [goMatch, setGoMatch] = useState(false);
 
   const onClickDislike = () => {
     console.log("dislike");
@@ -18,6 +23,18 @@ const SwipingContainer = () => {
     console.log("like");
     setTitle("Monkey");
   }
+
+  const matchTest = () => {
+    setGoMatch(true);
+  }
+
+  useEffect(()=>{
+    socket = props.location.state.socket
+    socket.emit('emitting from swipe page, i am a passed socket')
+
+
+  });
+  console.log(props)
   return (
     <Container>
     <Row>
@@ -45,6 +62,14 @@ const SwipingContainer = () => {
         />
         </StyledDiv>
       </Col>
+    </Row>
+    <Row>
+    <button className={'button mt-20'} type="button" onClick={matchTest}>Match</button> 
+    { goMatch ? <Redirect to={{ 
+                                pathname: "/match",
+                                state: {matched: props.location.state.top10[0]}
+                            }}
+                            /> : null }
     </Row>
     </Container>
   

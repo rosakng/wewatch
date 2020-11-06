@@ -21,6 +21,8 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
+    const [goMatch, setGoMatch] = useState(false);
+    const [top10, setTop10] = useState([]);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -32,6 +34,10 @@ const Lobby = ({location}) => {
             }
             console.log('starting');
         })
+    }
+
+    const matchTest = () => {
+        setGoMatch(true);
     }
 
     useEffect(() => {
@@ -81,6 +87,7 @@ const Lobby = ({location}) => {
         socket.on('sessionMembers', ({roomId, users, host, top10}) => {
             // TODO do something with the returned data
             console.log(top10)
+            setTop10(top10)
             setGoSwipe(true);
         });
     }, []);
@@ -108,7 +115,19 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                { goSwipe ? <Redirect to='/swiping?room=${roomId}'/> : null }
+                {/* <button className={'button mt-20'} type="button" onClick={matchTest}>Match</button>  */}
+                {/* { goSwipe ? <Redirect to='/swiping?room=${roomId}'/> : null } */}
+                { goSwipe ? <Redirect to={{ 
+                                pathname: '/swiping',
+                                search:'?room=${roomId}',
+                                state: {top10: top10, socket: socket}
+                            }}
+                            /> : null }
+                {/* { goMatch ? <Redirect to={{ 
+                                pathname: "/match",
+                                state: {top10: top10}
+                            }}
+                            /> : null } */}
             </div>
         </div>
     );
