@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import io from "socket.io-client";
 import { Redirect } from "react-router-dom";
-import Swiping from 'views/swiping/swiping-container';
 
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
@@ -13,23 +12,19 @@ import inception from 'views/swiping/assets/Inception.png';
 
 import './Lobby.css';
 
-// change to http://localhost:5000 for local development
-const ENDPOINT  = 'http://localhost:5000';
-
+// change to http://localhost:5000 f or local development
 // change to https://wewatch-server.herokuapp.com/ for production deployment
 const ENDPOINT = 'http://localhost:5000';
 
 let socket = io(ENDPOINT);
-console.log(socket);
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
     const [hostName, setHostName] = useState('');
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
-    const [goSwipe, setGoSwipe] = useState(false);
-
-    const [goNoMatch, setGoNoMatch] = useState(false);
+    const [page, setPage] = useState('Lobby')
+    const [cancel, setCancel] = useState(false);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -94,56 +89,72 @@ const Lobby = ({location}) => {
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host}) => {
-            console.log(socket)
             console.log("inside session members");
             // TODO do something with the returned data
-            console.log(top10)
-            setGoSwipe(true);
+            setPage('Swiping');
         });
     }, []);
 
     useEffect(() => {
         socket.on('noMatchRedirect', () => {
             console.log("lobby success")
-            setGoNoMatch(true);
+            setPage('NoMatch')
       });
     }, []);
 
-    if (!goSwipe){
-    return (
-        <div className="outerContainer">
-            <div className="container">
-            <button onClick={nomatchtest}>test</button>
-            { goNoMatch ? <Redirect to='/noMatch'/> : null }
-                <h1>Welcome to {hostName}'s Lobby</h1>
-                <h2>Lobby ID: {roomId} </h2>
-                <h2>In the lobby:</h2>
-                <ul>
-                    {users.map(element => {
-                        if(element.name === name) {
-                            return (<li>{element.name + " (You)"}</li>)
-                        } else if (element.name === hostName) {
-                            return (<li>{element.name + " (Host)"}</li>)
-                        } else {
-                            return (<li>{element.name}</li>)
-                        }
-                    })}
-                </ul>
-                {name === hostName 
-                    ? 
-                    <button className={'button mt-20'} type="button" onClick={onClickStartSession}>Start Session</button> 
-                    :
-                    <h2>Waiting for Host to start!</h2> 
-                }
-   
+    //takes user back to landing page
+    const cancelSession = () => {
+        setCancel(true);
+    }
 
+    //MAIN PAGES
+    function LobbyPage(props) {
+        return (
+            <div className="outerContainer">
+                <div className="container">
+                    <h1>Welcome to {hostName}'s Lobby</h1>
+                    <h2>Lobby ID: {roomId} </h2>
+                    <h2>In the lobby:</h2>
+                    <ul>
+                        {users.map(element => {
+                            if(element.name === name) {
+                                return (<li>{element.name + " (You)"}</li>)
+                            } else if (element.name === hostName) {
+                                return (<li>{element.name + " (Host)"}</li>)
+                            } else {
+                                return (<li>{element.name}</li>)
+                            }
+                        })}
+                    </ul>
+                    {name === hostName 
+                        ? 
+                        <button className={'button mt-20'} type="button" onClick={onClickStartSession}>Start Session</button> 
+                        :
+                        <h2>Waiting for Host to start!</h2> 
+                    }
+                </div>
             </div>
-        </div>
-    );} else {
+        ); 
+    }
+
+    function NoMatch() {
+        return (
+            <div className="noMatchHeroContainer">
+            { cancel ? <Redirect to='/'/> : null }
+                <h1>No Match :(</h1>
+                <h2>There were no movies that the group agreed on watching </h2>
+                <div className="buttonContainer">
+                <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
+                </div>
+            </div>
+        );
+    }
+
+    function Swiping(props){
+        console.log(props)
         return( <StyledDiv paddingLeft="512">
         <StyledDiv width="30%" flex alignItems="center">
         <button onClick={nomatchtest}>test</button>
-        { goNoMatch ? <Redirect to='/noMatch'/> : null }
         <CloseIcon
           style={{ color: theme.colors.green }}
           fontSize="large"
@@ -163,6 +174,14 @@ const Lobby = ({location}) => {
         />
         </StyledDiv>
       </StyledDiv>)
+    }
+
+    if (page == "Lobby"){
+        return <LobbyPage/>;
+    } else if (page == "Swiping") {
+        return <Swiping data = {{movieTitle: 'Xd', rating: '10'}}/>;
+    } else if (page == "NoMatch") {
+        return <NoMatch/>;
     }
   }
 
