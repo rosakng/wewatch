@@ -1,6 +1,8 @@
 const { initializeRoom, likeEvent, dislikeEvent } = require('./redis.repository');
 const redis = require("redis");
-const client = redis.createClient();
+// const client = redis.createClient();
+const { redis_keys } = require('./keys');
+const client = redis.createClient(redis_keys);
 const { promisify } = require("util");
 const hgetAsync = promisify(client.hget).bind(client);
 const hgetallAsync = promisify(client.HGETALL).bind(client);

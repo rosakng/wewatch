@@ -1,6 +1,7 @@
 const redis = require("redis");
 const { promisify } = require("util");
-const client = redis.createClient();
+const { redis_keys } = require('./keys');
+const client = redis.createClient(redis_keys);
 const hgetAsync = promisify(client.hget).bind(client);
 const hincrbyAsync = promisify(client.hincrby).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
