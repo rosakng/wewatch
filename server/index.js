@@ -70,10 +70,10 @@ io.on('connection', (socket) => {
         callback();
     });
 
-    // test to see if receive signal from the same connection
-    socket.on('emitting from swipe page, i am an imported socket', () => {
-        console.log('successfully received emit from same connection in swiping room')
-    } )
+     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
+     socket.on('I am emitted from an imported socket!', () => {
+        console.log('successfully received emit from imported socket in swiping page')
+    });
 });
 
 server.listen(PORT, () => {

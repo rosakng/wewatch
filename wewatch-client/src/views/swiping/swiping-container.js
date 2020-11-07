@@ -12,8 +12,9 @@ import socket from '../../Socket'
 
 const SwipingContainer = (props) => {
 
-  // const socket = props.location.state.socket
-
+  // test emit to be replaced by swiping actions
+  socket.emit('I am emitted from an imported socket!')
+  
   const [title, setTitle] = useState('Inception')
   const [goMatch, setGoMatch] = useState(false);
 
