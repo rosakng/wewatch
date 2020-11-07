@@ -99,6 +99,11 @@ io.on('connection', (socket) => {
         // io.to(user.room).emit('match found', {movieId: movieId});
         io.to(user.room).emit('match found');
     });
+    //received signal that no match was made
+    socket.on('noMatch', (room) => {
+        console.log('No Match signal received')
+        io.to(room).emit('noMatchRedirect')
+    })
 });
 
 server.listen(PORT, () => {

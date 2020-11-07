@@ -20,6 +20,8 @@ const SwipingContainer = (props) => {
     const [top10, setTop10] = useState(props.location.state.top10);
     const [goMatch, setGoMatch] = useState(false);
     const [matchedMovie, setMatchedMovie] = useState({});
+    const [noMatch, setNoMatch] = useState(false);
+    const [roomId, setRoomId] = useState('');
 
     const onClickDislike = () => {
         console.log("dislike");
@@ -72,7 +74,35 @@ const SwipingContainer = (props) => {
         })
     }, []);
     return (
+  }
+
+  //Todo: delete before deployment
+  const nomatchtest = () =>{
+    socket.emit('noMatch', roomId, (error) => {
+        if (error) {
+            alert(error);
+        }
+    })
+  }
+
+  useEffect(() => {
+    //initialize room value
+    setRoomId(props.location.state.room);
+  })
+
+  //listen to the no match event
+  useEffect(() => {
+    socket.on('noMatchRedirect', () => {
+        console.log("insinde redirect")
+        setNoMatch(true)
+  });
+});
+
+
+  return (
     <Container>
+    { noMatch ? <Redirect to='/noMatch'/> : null }
+    <button onClick={nomatchtest}>No Match test (will be removed)</button>
     <Row>
         <Col>
         <StyledDiv flex alignItems="center" marginTop={2}>

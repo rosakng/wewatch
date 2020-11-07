@@ -41,6 +41,7 @@ const Lobby = ({location}) => {
                 setHostName(host)
             })
             setName(name);
+            return () => { socket.off('roomCreation')};
         }
         else {
             // guest is joining room
@@ -53,9 +54,6 @@ const Lobby = ({location}) => {
             setName(name);
         }
 
-        return () => {
-            socket.close();
-        }
     }, [location.search]);
 
     useEffect(() => {
@@ -63,6 +61,8 @@ const Lobby = ({location}) => {
             setUsers(users);
             setHostName(host);
         });
+
+        return () => {socket.off('roomData')};
     }, []);
 
     useEffect(() => {
@@ -73,7 +73,9 @@ const Lobby = ({location}) => {
             setTop10(top10)
             setGoSwipe(true);
         });
+        return () => {socket.off('sessionMembers')};
     }, []);
+
 
     return (
         <div className="outerContainer">
