@@ -1,33 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
+
+import socket from 'Socket'
 
 import theme from 'styles/theme'
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
-import socket from 'Socket'
-
-const SwipingContainer = () => {
+const SwipingContainer = (props) => {
 
   // test emit to be replaced by swiping actions
   socket.emit('I am emitted from an imported socket!')
-  
-  const [title, setTitle] = useState('Inception')
 
+  const topTenMovies = props.location.state.topTenMovies;
+  const roomId = props.location.state.roomId;
+
+  const [index, setIndex]  = useState(0);
+  const [title, setTitle] = useState(topTenMovies[index].title);
+  const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
+
+  const iterateMovie = (index) => {
+    setTitle(topTenMovies[index].title);
+    setImageUrl(topTenMovies[index].image);
+  };
+  
   const onClickDislike = () => {
     console.log("dislike");
-  }
+    setIndex(index+1);
+    iterateMovie(index);
+  };
+
   const onClickLike = () => {
     console.log("like");
-    setTitle("Monkey");
+    setIndex(index+1);
+    iterateMovie(index);
+    const movieId = topTenMovies[index].netflixid;
+    socket.emit('like_event', {roomId: roomId, movieId: movieId});
   }
   return (
     <Container>
     <Row>
       <Col>
-      <StyledDiv flex alignItems="center" marginTop={2}>
+      {props.location.state.topTenMovies && (<StyledDiv flex alignItems="center" marginTop={2}>
         <CloseIcon
           style={{ color: theme.colors.red, fontSize: '60px'}}
           onClick={onClickDislike}
@@ -39,7 +55,7 @@ const SwipingContainer = () => {
             lengthOfMovie="2h 28m"
             rating="8/10"
             genre="Thriller"
-            imageURL="https://2.bp.blogspot.com/_Iau3R3yMIr4/TMBDGzcvwSI/AAAAAAAACbQ/77grl8TYdK4/s1600/inception1.jpg"
+            imageURL={imageURL}
             description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
           />
         </StyledDiv>
@@ -48,7 +64,7 @@ const SwipingContainer = () => {
           fontSize="large"
           onClick={onClickLike}
         />
-        </StyledDiv>
+        </StyledDiv>)}
       </Col>
     </Row>
     </Container>
