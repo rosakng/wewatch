@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
         console.log('getting top 10')
         getTop10().then((top10) => {
             // TODO add call to redis to initialize swiping room here
-            io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
+            io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
         }).catch((error) => {
             console.log('error getting list of top 10 movies from rapidapi')
             callback(error);
@@ -71,16 +71,15 @@ io.on('connection', (socket) => {
     });
 
      // received signal to start a session from the host of a room, emit redirect signal to all guests and host
-     socket.on('initialize_room', (roomId, numGuests, movies) => {
-        console.log(roomId)
-        console.log(numGuests)
-        console.log(movies)
+     socket.on('initialize_room', ({roomId, numGuests, movies}) => {
+        console.log('INITIALIZE ROOM:');
+        console.log(roomId);
+        console.log(numGuests);
         initializeRoom(roomId, numGuests, movies).then((result) => {
             console.log(result);
         }).catch((error) => {
             console.log('on initializing room, there was an error in redis');
             console.log(error);
-            callback(error);
         });
     });
 
@@ -91,17 +90,19 @@ io.on('connection', (socket) => {
     })
     socket.on('like_event', ({roomId, movieId, movieData}) => {
         console.log('like-event')
-        likeEvent(roomId, movieId, movieData).then((result) => {
+        console.log(movieId, movieData);
+        likeEvent(roomId, movieId).then((result) => {
+            console.log(result);
             if (result===0) {
                 // initiate match page
-                io.to(room).emit('matchRedirect', { matchedMovieId: movieId, matchedMovieData: movieData });
+                io.to(roomId).emit('matchRedirect', { matchedMovieId: movieId, matchedMovieData: movieData });
             }
             else if (result===1) {
                 // initiate end of movies
             }
         }).catch((error) => {
-            console.log('error on like event to redis')
-            callback(error);
+            console.log('error on like event to redis');
+            console.log(error);
         });
     });
 });

@@ -20,7 +20,6 @@ const SwipingContainer = (props) => {
   const [title, setTitle] = useState(topTenMovies[index].title);
   const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
 
-
   const iterateMovie = (index) => {
     setIndex(index + 1);
   };
@@ -58,7 +57,8 @@ const SwipingContainer = (props) => {
 
   //listen to match event
     socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
-      // initiate match functions
+      console.log(matchedMovieId);
+      console.log(matchedMovieData);
     });
   });
 
