@@ -4,7 +4,6 @@ import { Redirect } from "react-router-dom";
 
 import './Lobby.css';
 import socket from 'Socket'
-import { test_movie_data } from 'views/swiping/swiping-data';
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -71,12 +70,7 @@ const Lobby = ({location}) => {
         socket.on('sessionMembers', ({roomId, users, host, top10}) => {
             setGoSwipe(true);
             setTopTenMovies(top10);
-            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10})
-
-            // USE THE FOLLOWING FOR LOCAL TESTING:
-            // setGoSwipe(true);
-            // setTopTenMovies(test_movie_data);
-            // socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: test_movie_data});
+            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10});
         });
         return () => {socket.off('sessionMembers')};
     }, []);
