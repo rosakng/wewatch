@@ -74,6 +74,12 @@ io.on('connection', (socket) => {
      socket.on('I am emitted from an imported socket!', () => {
         console.log('successfully received emit from imported socket in swiping page')
     });
+
+    //received signal that no match was made
+    socket.on('noMatch', (room) => {
+        console.log('No Match signal received')
+        io.to(room).emit('noMatchRedirect')
+    })
 });
 
 server.listen(PORT, () => {
