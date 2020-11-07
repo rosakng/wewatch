@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
             // TODO add call to redis to initialize swiping room here
             io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
         }).catch((error) => {
-            console.log('error getting list of top 10 movies from rapidapi')
+            console.log(`error getting list of top 10 movies from rapidapi: ${error}`)
             callback(error);
         });
         callback();
@@ -72,14 +72,10 @@ io.on('connection', (socket) => {
 
      // received signal to start a session from the host of a room, emit redirect signal to all guests and host
      socket.on('initialize_room', ({roomId, numGuests, movies}) => {
-        console.log('INITIALIZE ROOM:');
-        console.log(roomId);
-        console.log(numGuests);
         initializeRoom(roomId, numGuests, movies).then((result) => {
             console.log(result);
         }).catch((error) => {
-            console.log('on initializing room, there was an error in redis');
-            console.log(error);
+            console.log(`on initializing room, there was an error in redis: ${error}`);
         });
     });
 
@@ -89,10 +85,7 @@ io.on('connection', (socket) => {
         io.to(room).emit('noMatchRedirect')
     })
     socket.on('like_event', ({roomId, movieId, movieData}) => {
-        console.log('like-event')
-        console.log(movieId, movieData);
         likeEvent(roomId, movieId).then((result) => {
-            console.log(result);
             if (result===0) {
                 // initiate match page
                 io.to(roomId).emit('matchRedirect', { matchedMovieId: movieId, matchedMovieData: movieData });
@@ -101,8 +94,7 @@ io.on('connection', (socket) => {
                 // initiate end of movies
             }
         }).catch((error) => {
-            console.log('error on like event to redis');
-            console.log(error);
+            console.log(`error on like event to redis: ${error}`);
         });
     });
 });

@@ -51,7 +51,7 @@ const SwipingContainer = (props) => {
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
-        console.log("insinde redirect")
+        console.log("inside redirect")
         setNoMatch(true)
    });
 
