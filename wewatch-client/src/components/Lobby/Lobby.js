@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
-import io from "socket.io-client";
 import { Redirect } from "react-router-dom";
 
 import './Lobby.css';
@@ -12,7 +11,6 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
-    const [goMatch, setGoMatch] = useState(false);
     const [top10, setTop10] = useState([]);
 
     const onClickStartSession = () => {
@@ -25,10 +23,6 @@ const Lobby = ({location}) => {
             }
             console.log('starting');
         })
-    }
-
-    const matchTest = () => {
-        setGoMatch(true);
     }
 
     useEffect(() => {
@@ -104,19 +98,12 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                {/* <button className={'button mt-20'} type="button" onClick={matchTest}>Match</button>  */}
-                {/* { goSwipe ? <Redirect to='/swiping?room=${roomId}'/> : null } */}
                 { goSwipe ? <Redirect to={{ 
                                 pathname: '/swiping',
-                                search:'?room=${roomId}',
+                                search:`?room=${roomId}`,
                                 state: {top10: top10}
                             }}
                             /> : null }
-                {/* { goMatch ? <Redirect to={{ 
-                                pathname: "/match",
-                                state: {top10: top10}
-                            }}
-                            /> : null } */}
             </div>
         </div>
     );

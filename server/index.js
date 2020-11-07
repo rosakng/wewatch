@@ -70,9 +70,34 @@ io.on('connection', (socket) => {
         callback();
     });
 
-     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
+     // test 
      socket.on('I am emitted from an imported socket!', () => {
         console.log('successfully received emit from imported socket in swiping page')
+    });
+
+    // // stubbed match page test
+    // socket.on('match test', ({movieId, user}, callback) => {
+    //     // host = getHost(roomId)
+    //     console.log('match test initiated');
+    //     console.log('sending back movie id:' + movieId);
+    //     io.to(user.room).emit('match found', {movieId: movieId});
+    //     callback();
+    // });
+
+    // socket.on('match test', (movieId, user) => {
+    //     console.log('match test initiated');
+    //     console.log(movieId)
+    //     console.log(user)
+    //     // io.to(user.room).emit('match found', {movieId: movieId});
+    //     io.to(user.room).emit('match found');
+    // });
+
+    socket.on('match test', () => {
+        console.log('match test initiated');
+        // console.log(movieId)
+        // console.log(user)
+        // io.to(user.room).emit('match found', {movieId: movieId});
+        io.to(user.room).emit('match found');
     });
 });
 
