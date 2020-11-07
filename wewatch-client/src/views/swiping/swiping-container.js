@@ -40,35 +40,36 @@ const SwipingContainer = (props) => {
     socket.emit('like_event', {roomId: roomId, movieId: movieId});
   }
   return (
-    <Container>
+  <Container>
     <Row>
       <Col>
-      {props.location.state.topTenMovies && (<StyledDiv flex alignItems="center" marginTop={2}>
-        <CloseIcon
-          style={{ color: theme.colors.red, fontSize: '60px'}}
-          onClick={onClickDislike}
-        />
-        <StyledDiv padding={2}>
-          <MovieDetail
-            title={title}
-            year="2016"
-            lengthOfMovie="2h 28m"
-            rating="8/10"
-            genre="Thriller"
-            imageURL={imageURL}
-            description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
+      {props.location.state.topTenMovies && (
+        <StyledDiv flex alignItems="center" marginTop={2}>
+          <CloseIcon
+            style={{ color: theme.colors.red, fontSize: '60px'}}
+            onClick={onClickDislike}
+          />
+          <StyledDiv padding={2}>
+            <MovieDetail
+              title={title}
+              year="2016"
+              lengthOfMovie="2h 28m"
+              rating="8/10"
+              genre="Thriller"
+              imageURL={imageURL}
+              description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
+            />
+          </StyledDiv>
+          <InsertEmoticonIcon
+            style={{ color: theme.colors.green, fontSize: '60px'}}
+            fontSize="large"
+            onClick={onClickLike}
           />
         </StyledDiv>
-        <InsertEmoticonIcon
-          style={{ color: theme.colors.green, fontSize: '60px'}}
-          fontSize="large"
-          onClick={onClickLike}
-        />
-        </StyledDiv>)}
+      )}
       </Col>
     </Row>
-    </Container>
-  
+  </Container>
   );
 };
 
