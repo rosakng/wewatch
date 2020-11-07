@@ -80,6 +80,10 @@ io.on('connection', (socket) => {
         console.log('No Match signal received')
         io.to(room).emit('noMatchRedirect')
     })
+    socket.on('like_event', ({roomId, movieId}) => {
+        console.log('like-event')
+        console.log(movieId)
+    });
 });
 
 server.listen(PORT, () => {

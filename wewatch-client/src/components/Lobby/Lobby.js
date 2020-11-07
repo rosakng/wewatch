@@ -71,16 +71,8 @@ const Lobby = ({location}) => {
             setGoSwipe(true);
             setTopTenMovies(top10);
         });
-    }, []);
-
-    useEffect(() => {
-        socket.on('like_event', ({roomId, movieId}) => {
-            console.log('like-event')
-            console.log(movieId)
-        });
         return () => {socket.off('sessionMembers')};
     }, []);
-
 
     return (
         <div className="outerContainer">
