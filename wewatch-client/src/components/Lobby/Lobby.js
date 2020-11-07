@@ -100,7 +100,7 @@ const Lobby = ({location}) => {
                 }
                 { goSwipe && topTenMovies!=null ? <Redirect to={{ 
                                 pathname: '/swiping',
-                                search:'?room=${roomId}',
+                                search:`?room=${roomId}`,
                                 state: {
                                     roomId: roomId,
                                     topTenMovies: topTenMovies,
