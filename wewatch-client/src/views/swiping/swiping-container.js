@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
+import { Redirect } from "react-router-dom";
 
 import socket from 'Socket'
 
@@ -10,9 +11,10 @@ import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = (props) => {
-
   // test emit to be replaced by swiping actions
-  socket.emit('I am emitted from an imported socket!')
+  //socket.emit('I am emitted from an imported socket!')
+  
+  const [noMatch, setNoMatch] = useState(false);
 
   const topTenMovies = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
@@ -39,8 +41,29 @@ const SwipingContainer = (props) => {
     const movieId = topTenMovies[index].netflixid;
     socket.emit('like_event', {roomId: roomId, movieId: movieId});
   }
+
+  //Todo: delete before deployment
+  const nomatchtest = () =>{
+    socket.emit('noMatch', roomId, (error) => {
+        if (error) {
+            alert(error);
+        }
+    })
+  }
+
+  //listen to the no match event
+  useEffect(() => {
+    socket.on('noMatchRedirect', () => {
+        console.log("insinde redirect")
+        setNoMatch(true)
+  });
+});
+
+
   return (
   <Container>
+    { noMatch ? <Redirect to='/noMatch'/> : null }
+    <button onClick={nomatchtest}>No Match test (will be removed)</button>
     <Row>
       <Col>
       {props.location.state.topTenMovies && (
