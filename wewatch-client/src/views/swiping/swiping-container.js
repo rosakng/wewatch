@@ -10,10 +10,7 @@ import theme from 'styles/theme'
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
-const SwipingContainer = (props) => {
-  // test emit to be replaced by swiping actions
-  //socket.emit('I am emitted from an imported socket!')
-  
+const SwipingContainer = (props) => {  
   const [noMatch, setNoMatch] = useState(false);
 
   const topTenMovies = props.location.state.topTenMovies;
@@ -22,6 +19,7 @@ const SwipingContainer = (props) => {
   const [index, setIndex]  = useState(0);
   const [title, setTitle] = useState(topTenMovies[index].title);
   const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
+
 
   const iterateMovie = (index) => {
     setIndex(index + 1);
@@ -37,9 +35,9 @@ const SwipingContainer = (props) => {
   };
 
   const onClickLike = () => {
-    iterateMovie(index);
     const movieId = topTenMovies[index].netflixid;
-    socket.emit('like_event', {roomId: roomId, movieId: movieId});
+    socket.emit('like_event', {roomId: roomId, movieId: movieId, movieData: topTenMovies[index]});
+    iterateMovie(index);
   }
 
   //Todo: delete before deployment
@@ -56,9 +54,13 @@ const SwipingContainer = (props) => {
     socket.on('noMatchRedirect', () => {
         console.log("insinde redirect")
         setNoMatch(true)
-  });
-});
+   });
 
+  //listen to match event
+    socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
+      // initiate match functions
+    });
+  });
 
   return (
   <Container>

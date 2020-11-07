@@ -70,6 +70,7 @@ const Lobby = ({location}) => {
         socket.on('sessionMembers', ({roomId, users, host, top10}) => {
             setGoSwipe(true);
             setTopTenMovies(top10);
+            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10})
         });
         return () => {socket.off('sessionMembers')};
     }, []);
@@ -102,7 +103,7 @@ const Lobby = ({location}) => {
                                 search:'?room=${roomId}',
                                 state: {
                                     roomId: roomId,
-                                    topTenMovies: topTenMovies
+                                    topTenMovies: topTenMovies,
                                 }
                             }}
                             /> : null }
