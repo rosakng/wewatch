@@ -24,19 +24,19 @@ const SwipingContainer = (props) => {
   const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
 
   const iterateMovie = (index) => {
+    setIndex(index + 1);
+  };
+
+  useEffect(() => {
     setTitle(topTenMovies[index].title);
     setImageUrl(topTenMovies[index].image);
-  };
+  });
   
   const onClickDislike = () => {
-    console.log("dislike");
-    setIndex(index+1);
     iterateMovie(index);
   };
 
   const onClickLike = () => {
-    console.log("like");
-    setIndex(index+1);
     iterateMovie(index);
     const movieId = topTenMovies[index].netflixid;
     socket.emit('like_event', {roomId: roomId, movieId: movieId});
