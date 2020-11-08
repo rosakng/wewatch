@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
 import { Redirect } from "react-router-dom";
+import queryString from 'query-string';
 
 import socket from 'Socket'
 
@@ -12,6 +13,8 @@ import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = (props) => {  
   const [noMatch, setNoMatch] = useState(false);
+  const [match, setMatch] = useState(false);
+  const [matchedMovie, setMatchedMovie] = useState({});
 
   const topTenMovies = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
@@ -59,11 +62,17 @@ const SwipingContainer = (props) => {
     socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
       console.log(matchedMovieId);
       console.log(matchedMovieData);
+      setMatchedMovie(matchedMovieData);
+      setMatch(true);
     });
   });
 
   return (
   <Container>
+    { match && matchedMovie != null ? <Redirect to={{ 
+                                pathname: '/match',
+                                state: {matchedMovie: matchedMovie}
+                            }}/>: null }
     { noMatch ? <Redirect to='/noMatch'/> : null }
     <button onClick={nomatchtest}>No Match test (will be removed)</button>
     <Row>
