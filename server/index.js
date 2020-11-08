@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
             }
             else if (result===1) {
                 // initiate swiping completed with no match
-                io.to(room).emit('noMatchRedirect')
+                io.to(roomId).emit('noMatchRedirect')
             }
         }).catch((error) => {
             console.log(`error on like event to redis: ${error}`);
@@ -106,7 +106,7 @@ io.on('connection', (socket) => {
         dislikeEvent(roomId).then((result) => {
             if(result == 1) {
                 // initiate swiping completed with no match
-                io.to(room).emit('noMatchRedirect')
+                io.to(roomId).emit('noMatchRedirect')
             }
         }).catch((error) => {
             console.log(`error on dislike event to redis: ${error}`);
