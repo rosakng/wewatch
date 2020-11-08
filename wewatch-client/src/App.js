@@ -5,6 +5,7 @@ import Join from 'components/Join/Join';
 import Landing from 'components/Landing/Landing';
 import Lobby from 'components/Lobby/Lobby';
 import Swiping from 'views/swiping/swiping-container';
+import noMatch from 'components/noMatch/noMatch';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -16,6 +17,7 @@ const App = () => {
       <Route path="/chat" component={Chat} />
       <Route path="/lobby" component={Lobby}/>
       <Route path="/swiping" component={Swiping}/>
+      <Route path="/noMatch" component={noMatch}/>
     </Router>
   );
 }

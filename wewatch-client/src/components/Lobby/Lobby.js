@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
-import io from "socket.io-client";
 import { Redirect } from "react-router-dom";
 
 import './Lobby.css';
-
-// change to http://localhost:5000 for local development
-const ENDPOINT  = 'http://localhost:5000';
-
-// change to https://wewatch-server.herokuapp.com/ for production deployment
-// const ENDPOINT = 'https://wewatch-server.herokuapp.com/';
-
-
-
-let socket;
+import socket from 'Socket'
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -21,6 +11,7 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
+    const [topTenMovies, setTopTenMovies] = useState(null);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -35,8 +26,6 @@ const Lobby = ({location}) => {
     }
 
     useEffect(() => {
-        socket = io(ENDPOINT);
-
         const { name, room } = queryString.parse(location.search);
 
         // host user does not have room ID in query params
@@ -52,6 +41,7 @@ const Lobby = ({location}) => {
                 setHostName(host)
             })
             setName(name);
+            return () => { socket.off('roomCreation')};
         }
         else {
             // guest is joining room
@@ -64,25 +54,25 @@ const Lobby = ({location}) => {
             setName(name);
         }
 
-        return () => {
-            socket.close();
-        }
-    }, [ENDPOINT, location.search]);
+    }, [location.search]);
 
     useEffect(() => {
         socket.on("roomData", ({ users, host }) => {
             setUsers(users);
             setHostName(host);
         });
+
+        return () => {socket.off('roomData')};
     }, []);
 
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host, top10}) => {
-            // TODO do something with the returned data
-            console.log(top10)
             setGoSwipe(true);
+            setTopTenMovies(top10);
+            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10});
         });
+        return () => {socket.off('sessionMembers')};
     }, []);
 
     return (
@@ -108,7 +98,15 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                { goSwipe ? <Redirect to='/swiping?room=${roomId}'/> : null }
+                { goSwipe && topTenMovies!=null ? <Redirect to={{ 
+                                pathname: '/swiping',
+                                search:`?room=${roomId}`,
+                                state: {
+                                    roomId: roomId,
+                                    topTenMovies: topTenMovies,
+                                }
+                            }}
+                            /> : null }
             </div>
         </div>
     );
