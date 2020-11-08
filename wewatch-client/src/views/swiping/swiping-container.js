@@ -25,7 +25,7 @@ const SwipingContainer = (props) => {
   const [year, setYear] = useState(topTenMovies[index].released);
   const [lengthOfMovie, setLengthOfMovie] = useState(topTenMovies[index].duration);
   const [rating, setRating] = useState(topTenMovies[index].rating);
-  const [genre, setGenre] = useState(topTenMovies[index].type);
+  const [mediaType, setmediaType] = useState(topTenMovies[index].type);
   const [description, setDescription] = useState(topTenMovies[index].synopsis);
 
   const iterateMovie = (index) => {
@@ -40,7 +40,7 @@ const SwipingContainer = (props) => {
     setYear(topTenMovies[index].released);
     setLengthOfMovie(topTenMovies[index].runtime);
     setRating(topTenMovies[index].rating);
-    setGenre(topTenMovies[index].type);
+    setmediaType(topTenMovies[index].type);
     setDescription(topTenMovies[index].synopsis);
   });
   
@@ -102,7 +102,7 @@ const SwipingContainer = (props) => {
               year={year}
               lengthOfMovie={lengthOfMovie}
               rating={rating}
-              genre={genre}
+              mediaType={mediaType}
               imageURL={imageURL}
               description={description}
             />

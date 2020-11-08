@@ -45,7 +45,7 @@ const MovieDetail = ({
   title,
   rating,
   year,
-  genre,
+  mediaType,
   lengthOfMovie,
   imageURL,
   description,
@@ -73,7 +73,7 @@ const MovieDetail = ({
       <BrushIcon
           style={{fontSize: '40px'}}
       />
-      <DetailText>{genre}</DetailText>
+      <DetailText>{mediaType}</DetailText>
     </StyledDiv>
     <StyledDiv flex alignItems="center">
       <WatchLaterIcon
