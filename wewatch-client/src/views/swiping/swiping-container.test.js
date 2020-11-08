@@ -16,17 +16,16 @@ const location= {
     topTenMovies: test_movie_data,
   }
 }
-describe('Render Swiping Container', () => {
+describe('Render Swiping Container with props', () => {
   const wrapper = shallow(
     <SwipingContainer location={location} />
   );
-  it('Renders the movie details component', () => {
+  it('Contains like button functionality and renders the movie details component with correct movie details', () => {
     expect(wrapper.containsMatchingElement(<MovieDetail />)).toBe(true);
     expect(wrapper.find(MovieDetail).props().title).toBe('The Short Game');
+    expect(wrapper.containsMatchingElement(<InsertEmoticonIcon />)).toBe(true);
     const like_button = wrapper.find(InsertEmoticonIcon);
     like_button.simulate('click');
-    // expect(like_button.props().onClick()).toHaveBeenCalled()
-    // expect(wrapper.find(MovieDetail).debug()).toBe('');
-    // expect(wrapper.find(MovieDetail).props().title).toBe('The Short Game');
+    wrapper.update();
   });
 });
