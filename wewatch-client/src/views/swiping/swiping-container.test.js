@@ -1,9 +1,31 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import SwipingContainer from './swiping-container';
+import Enzyme, { shallow } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 
-it('renders the Swiping container', () => {
-  const div = document.createElement("div");
-  ReactDOM.render(<Router><SwipingContainer/></Router>, div)
+import MovieDetail from 'views/swiping/movie-detail.js'; 
+
+import { test_movie_data } from 'views/swiping/swiping-data';
+Enzyme.configure({ adapter: new Adapter() });
+
+const location= {
+  state: {
+    roomId: 'roomId',
+    topTenMovies: test_movie_data,
+  }
+}
+describe('Render Swiping Container with props', () => {
+  const wrapper = shallow(
+    <SwipingContainer location={location} />
+  );
+  it('Contains like button functionality and renders the movie details component with correct movie details', () => {
+    expect(wrapper.containsMatchingElement(<MovieDetail />)).toBe(true);
+    expect(wrapper.find(MovieDetail).props().title).toBe('The Short Game');
+    expect(wrapper.containsMatchingElement(<InsertEmoticonIcon />)).toBe(true);
+    const like_button = wrapper.find(InsertEmoticonIcon);
+    like_button.simulate('click');
+    wrapper.update();
+  });
 });
