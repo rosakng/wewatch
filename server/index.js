@@ -78,32 +78,7 @@ io.on('connection', (socket) => {
             console.log(`on initializing room, there was an error in redis: ${error}`);
         });
     });
-
-    // // stubbed match page test
-    // socket.on('match test', ({movieId, user}, callback) => {
-    //     // host = getHost(roomId)
-    //     console.log('match test initiated');
-    //     console.log('sending back movie id:' + movieId);
-    //     io.to(user.room).emit('match found', {movieId: movieId});
-    //     callback();
-    // });
-
-    // socket.on('match test', (movieId, user) => {
-    //     console.log('match test initiated');
-    //     console.log(movieId)
-    //     console.log(user)
-    //     // io.to(user.room).emit('match found', {movieId: movieId});
-    //     io.to(user.room).emit('match found');
-    // });
-
-    // socket.on('match test', (movieId, roomId) => {
-    //     console.log('match test initiated');
-    //     console.log(movieId)
-    //     console.log(roomId)
-    //     // io.to(user.room).emit('match found', {movieId: movieId});
-    //     io.to(roomId).emit('match found', {movieId: movieId});
-    // });
-
+    
     socket.on('match test', (movieId, user) => {
         console.log('match test initiated');
         console.log(movieId)
