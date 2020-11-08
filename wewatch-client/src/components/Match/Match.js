@@ -25,8 +25,8 @@ const Match = (props) => {
                 year={movieData.released}
                 lengthOfMovie={movieData.runtime}
                 rating={movieData.rating}
-                genre="Thriller"
-                imageURL={movieData.largeimage}
+                mediaType={movieData.type}
+                imageURL={movieData.image}
                 description={movieData.synopsis}
                 />
             </StyledDiv>

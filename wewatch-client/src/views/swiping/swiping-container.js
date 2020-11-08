@@ -5,9 +5,9 @@ import { Container, Row, Col } from 'reactstrap';
 import { Redirect } from "react-router-dom";
 import queryString from 'query-string';
 
-import socket from 'Socket'
+import socket from 'Socket';
 
-import theme from 'styles/theme'
+import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
@@ -15,23 +15,36 @@ const SwipingContainer = (props) => {
   const [noMatch, setNoMatch] = useState(false);
   const [match, setMatch] = useState(false);
   const [matchedMovie, setMatchedMovie] = useState({});
+  const [SwipingCompleted, setSwipingCompleted] = useState(false);
 
   const topTenMovies = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
 
   const [index, setIndex]  = useState(0);
   const [title, setTitle] = useState(topTenMovies[index].title);
-  const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
+  const [imageURL, setImageUrl] = useState(topTenMovies[index].image);
+  const [year, setYear] = useState(topTenMovies[index].released);
+  const [lengthOfMovie, setLengthOfMovie] = useState(topTenMovies[index].duration);
+  const [rating, setRating] = useState(topTenMovies[index].rating);
+  const [mediaType, setmediaType] = useState(topTenMovies[index].type);
+  const [description, setDescription] = useState(topTenMovies[index].synopsis);
 
   const iterateMovie = (index) => {
     if(index !== (topTenMovies.length - 1)) {
       setIndex(index + 1);
+    } else {
+      setSwipingCompleted(true)
     }
   };
 
   useEffect(() => {
     setTitle(topTenMovies[index].title);
     setImageUrl(topTenMovies[index].image);
+    setYear(topTenMovies[index].released);
+    setLengthOfMovie(topTenMovies[index].runtime);
+    setRating(topTenMovies[index].rating);
+    setmediaType(topTenMovies[index].type);
+    setDescription(topTenMovies[index].synopsis);
   });
   
   const onClickDislike = () => {
@@ -48,8 +61,8 @@ const SwipingContainer = (props) => {
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
-        console.log("inside redirect")
-        setNoMatch(true)
+        console.log("inside redirect");
+        setNoMatch(true);
    });
 
   //listen to match event
@@ -61,6 +74,15 @@ const SwipingContainer = (props) => {
     });
   });
 
+  function SwipingCompletedScreen () {
+    return(<Container>{ match && matchedMovie != null ? <Redirect to={{ 
+      pathname: '/match',
+      state: {matchedMovie: matchedMovie}
+      }}/>: null }
+      { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1></Container>)
+  }
+
+  if (!SwipingCompleted){
   return (
   <Container>
     { match && matchedMovie != null ? <Redirect to={{ 
@@ -79,12 +101,12 @@ const SwipingContainer = (props) => {
           <StyledDiv padding={2}>
             <MovieDetail
               title={title}
-              year="2016"
-              lengthOfMovie="2h 28m"
-              rating="8/10"
-              genre="Thriller"
+              year={year}
+              lengthOfMovie={lengthOfMovie}
+              rating={rating}
+              mediaType={mediaType}
               imageURL={imageURL}
-              description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
+              description={description}
             />
           </StyledDiv>
           <InsertEmoticonIcon
@@ -97,7 +119,10 @@ const SwipingContainer = (props) => {
       </Col>
     </Row>
   </Container>
-  );
+  );}
+  else if (SwipingCompleted) {
+    return(<SwipingCompletedScreen/>)
+  }
 };
 
 export default SwipingContainer;
