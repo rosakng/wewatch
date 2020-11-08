@@ -15,6 +15,7 @@ const SwipingContainer = (props) => {
   const [noMatch, setNoMatch] = useState(false);
   const [match, setMatch] = useState(false);
   const [matchedMovie, setMatchedMovie] = useState({});
+  const [SwipingCompleted, setSwipingCompleted] = useState(false);
 
   const topTenMovies = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
@@ -26,6 +27,8 @@ const SwipingContainer = (props) => {
   const iterateMovie = (index) => {
     if(index !== (topTenMovies.length - 1)) {
       setIndex(index + 1);
+    } else {
+      setSwipingCompleted(true)
     }
   };
 
@@ -61,6 +64,15 @@ const SwipingContainer = (props) => {
     });
   });
 
+  function SwipingCompletedScreen () {
+    return(<Container>{ match && matchedMovie != null ? <Redirect to={{ 
+      pathname: '/match',
+      state: {matchedMovie: matchedMovie}
+      }}/>: null }
+      { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1></Container>)
+  }
+
+  if (!SwipingCompleted){
   return (
   <Container>
     { match && matchedMovie != null ? <Redirect to={{ 
@@ -97,7 +109,10 @@ const SwipingContainer = (props) => {
       </Col>
     </Row>
   </Container>
-  );
+  );}
+  else if (SwipingCompleted) {
+    return(<SwipingCompletedScreen/>)
+  }
 };
 
 export default SwipingContainer;
