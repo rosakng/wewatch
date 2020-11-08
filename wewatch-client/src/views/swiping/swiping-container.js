@@ -65,8 +65,11 @@ const SwipingContainer = (props) => {
   });
 
   function SwipingCompletedScreen () {
-    return(<Container><h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1></Container>)
-
+    return(<Container>{ match && matchedMovie != null ? <Redirect to={{ 
+      pathname: '/match',
+      state: {matchedMovie: matchedMovie}
+      }}/>: null }
+      { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1></Container>)
   }
 
   if (!SwipingCompleted){
