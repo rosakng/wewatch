@@ -24,7 +24,7 @@ const SwipingContainer = (props) => {
   const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
 
   const iterateMovie = (index) => {
-    if(index !== 9) {
+    if(index !== (topTenMovies.length - 1)) {
       setIndex(index + 1);
     }
   };
