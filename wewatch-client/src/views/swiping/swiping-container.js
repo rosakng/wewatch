@@ -13,6 +13,8 @@ import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = (props) => {  
   const [noMatch, setNoMatch] = useState(false);
+  const [match, setMatch] = useState(false);
+  const [matchedMovie, setMatchedMovie] = useState({});
 
   const topTenMovies = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
@@ -40,44 +42,6 @@ const SwipingContainer = (props) => {
     iterateMovie(index);
   }
 
-    /**
-     * This function returns the movie object from top10 that matches the given movie ID
-     * @param {string} movieId 
-     * @returns {object} movie object
-     */
-    const getMatchedMovie = (movieId) => {
-        console.log(top10)
-        console.log(top10[0])
-        let i = 0;
-        console.log(top10[i])
-        // find movie that matches matched movie ID sent from backend
-        while(top10[i].netflixid !== movieId){
-            i++;
-        }
-        return top10[i];
-    }
-
-    useEffect(() => {
-        const {room} = queryString.parse(props.location.search);
-        setRoomId(room);
-        console.log(top10)
-    }, []);
-
-    useEffect(() => {
-        // set redirect boolean to true after match signal sent from backend
-        socket.on('match found', ( {movieId} ) => {
-            console.log(movieId)
-            setMatchedMovie(getMatchedMovie(movieId));
-            setGoMatch(true);
-        })
-
-        // socket.on('match found', () => {
-        //     console.log('got match found signal from backend')
-        //     // setMatchedMovie(getMatchedMovie(movieId));
-        //     // setGoMatch(true);
-        // })
-        return () => {socket.off('match found')}
-    }, []);
   //Todo: delete before deployment
   const nomatchtest = () =>{
     socket.emit('noMatch', roomId, (error) => {
@@ -98,11 +62,17 @@ const SwipingContainer = (props) => {
     socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
       console.log(matchedMovieId);
       console.log(matchedMovieData);
+      setMatchedMovie(matchedMovieData);
+      setMatch(true);
     });
   });
 
   return (
   <Container>
+    { match && matchedMovie != null ? <Redirect to={{ 
+                                pathname: '/match',
+                                state: {matchedMovie: matchedMovie}
+                            }}/>: null }
     { noMatch ? <Redirect to='/noMatch'/> : null }
     <button onClick={nomatchtest}>No Match test (will be removed)</button>
     <Row>
