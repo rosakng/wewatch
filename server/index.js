@@ -92,13 +92,22 @@ io.on('connection', (socket) => {
     //     io.to(user.room).emit('match found');
     // });
 
-    socket.on('match test', () => {
+    // socket.on('match test', (movieId, roomId) => {
+    //     console.log('match test initiated');
+    //     console.log(movieId)
+    //     console.log(roomId)
+    //     // io.to(user.room).emit('match found', {movieId: movieId});
+    //     io.to(roomId).emit('match found', {movieId: movieId});
+    // });
+
+    socket.on('match test', (movieId, user) => {
         console.log('match test initiated');
-        // console.log(movieId)
-        // console.log(user)
+        console.log(movieId)
+        console.log(user)
         // io.to(user.room).emit('match found', {movieId: movieId});
-        io.to(user.room).emit('match found');
+        io.to(user.room).emit('match found', {movieId: movieId});
     });
+
     //received signal that no match was made
     socket.on('noMatch', (room) => {
         console.log('No Match signal received')

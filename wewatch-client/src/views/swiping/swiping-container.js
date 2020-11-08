@@ -17,11 +17,11 @@ const SwipingContainer = (props) => {
     // socket.emit('match test');
     const [roomId, setRoomId] = useState('');
     const [title, setTitle] = useState('Inception');
-    const [top10, setTop10] = useState(props.location.state.top10);
     const [goMatch, setGoMatch] = useState(false);
     const [matchedMovie, setMatchedMovie] = useState({});
     const [noMatch, setNoMatch] = useState(false);
-    const [roomId, setRoomId] = useState('');
+
+    const top10 = props.location.state.top10;
 
     const onClickDislike = () => {
         console.log("dislike");
@@ -31,11 +31,19 @@ const SwipingContainer = (props) => {
     setTitle("Monkey");
     }
 
+    // const matchTest = () => {
+    //     console.log('attempting to emit')
+    //     let movieId = 70059700;
+    //     console.log(roomId)
+    //     socket.emit('match test', movieId, roomId);
+    // }
+
     const matchTest = () => {
         console.log('attempting to emit')
         let movieId = 70059700;
-        let user = {room: roomId};
-        socket.emit('match test');
+        let user = {room: roomId}
+        console.log(user)
+        socket.emit('match test', movieId, user);
     }
 
     /**
@@ -44,7 +52,10 @@ const SwipingContainer = (props) => {
      * @returns {object} movie object
      */
     const getMatchedMovie = (movieId) => {
+        console.log(top10)
+        console.log(top10[0])
         let i = 0;
+        console.log(top10[i])
         // find movie that matches matched movie ID sent from backend
         while(top10[i].netflixid !== movieId){
             i++;
@@ -53,29 +64,26 @@ const SwipingContainer = (props) => {
     }
 
     useEffect(() => {
-        const {room} = queryString.parse(props.location.search)
-        console.log(room)
-        setRoomId(room)
-        console.log(props)
+        const {room} = queryString.parse(props.location.search);
+        setRoomId(room);
+        console.log(top10)
     }, []);
 
     useEffect(() => {
         // set redirect boolean to true after match signal sent from backend
-        // socket.on('match found', ( {movieId} ) => {
-        //     console.log(movieId)
-        //     setMatchedMovie(getMatchedMovie(movieId));
-        //     setGoMatch(true);
-        // })
-
-        socket.on('match found', () => {
-            console.log('got match found signal from backend')
-            // setMatchedMovie(getMatchedMovie(movieId));
-            // setGoMatch(true);
+        socket.on('match found', ( {movieId} ) => {
+            console.log(movieId)
+            setMatchedMovie(getMatchedMovie(movieId));
+            setGoMatch(true);
         })
-    }, []);
-    return (
-  }
 
+        // socket.on('match found', () => {
+        //     console.log('got match found signal from backend')
+        //     // setMatchedMovie(getMatchedMovie(movieId));
+        //     // setGoMatch(true);
+        // })
+        return () => {socket.off('match found')}
+    }, []);
   //Todo: delete before deployment
   const nomatchtest = () =>{
     socket.emit('noMatch', roomId, (error) => {
@@ -87,16 +95,16 @@ const SwipingContainer = (props) => {
 
   useEffect(() => {
     //initialize room value
-    setRoomId(props.location.state.room);
+    // setRoomId(props.location.state.room);
   })
 
   //listen to the no match event
-  useEffect(() => {
-    socket.on('noMatchRedirect', () => {
-        console.log("insinde redirect")
-        setNoMatch(true)
-  });
-});
+    useEffect(() => {
+        socket.on('noMatchRedirect', () => {
+            console.log("insinde redirect")
+            setNoMatch(true)
+            });
+    });
 
 
   return (
