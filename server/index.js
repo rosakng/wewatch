@@ -87,11 +87,6 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('match found', {movieId: movieId});
     });
 
-    //received signal that no match was made
-    socket.on('noMatch', (room) => {
-        console.log('No Match signal received')
-        io.to(room).emit('noMatchRedirect')
-    })
     socket.on('like_event', ({roomId, movieId, movieData}) => {
         likeEvent(roomId, movieId).then((result) => {
             if (result===0) {
@@ -99,7 +94,8 @@ io.on('connection', (socket) => {
                 io.to(roomId).emit('matchRedirect', { matchedMovieId: movieId, matchedMovieData: movieData });
             }
             else if (result===1) {
-                // initiate swiping completed
+                // initiate swiping completed with no match
+                io.to(room).emit('noMatchRedirect')
             }
         }).catch((error) => {
             console.log(`error on like event to redis: ${error}`);
@@ -109,7 +105,8 @@ io.on('connection', (socket) => {
     socket.on('dislike_event', ({roomId}) => {
         dislikeEvent(roomId).then((result) => {
             if(result == 1) {
-                // initiate swiping completed
+                // initiate swiping completed with no match
+                io.to(room).emit('noMatchRedirect')
             }
         }).catch((error) => {
             console.log(`error on dislike event to redis: ${error}`);

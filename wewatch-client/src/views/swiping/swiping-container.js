@@ -45,15 +45,6 @@ const SwipingContainer = (props) => {
     iterateMovie(index);
   }
 
-  //Todo: delete before deployment
-  const nomatchtest = () =>{
-    socket.emit('noMatch', roomId, (error) => {
-        if (error) {
-            alert(error);
-        }
-    })
-  }
-
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
@@ -77,7 +68,6 @@ const SwipingContainer = (props) => {
                                 state: {matchedMovie: matchedMovie}
                             }}/>: null }
     { noMatch ? <Redirect to='/noMatch'/> : null }
-    <button onClick={nomatchtest}>No Match test (will be removed)</button>
     <Row>
       <Col>
       {props.location.state.topTenMovies && (
