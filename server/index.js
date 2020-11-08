@@ -78,6 +78,14 @@ io.on('connection', (socket) => {
             console.log(`on initializing room, there was an error in redis: ${error}`);
         });
     });
+    
+    socket.on('match test', (movieId, user) => {
+        console.log('match test initiated');
+        console.log(movieId)
+        console.log(user)
+        // io.to(user.room).emit('match found', {movieId: movieId});
+        io.to(user.room).emit('match found', {movieId: movieId});
+    });
 
     //received signal that no match was made
     socket.on('noMatch', (room) => {
