@@ -7,7 +7,7 @@ import queryString from 'query-string';
 
 import socket from 'Socket'
 
-import theme from 'styles/theme'
+import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
@@ -21,7 +21,12 @@ const SwipingContainer = (props) => {
 
   const [index, setIndex]  = useState(0);
   const [title, setTitle] = useState(topTenMovies[index].title);
-  const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
+  const [imageURL, setImageUrl] = useState(topTenMovies[index].image);
+  const [year, setYear] = useState(topTenMovies[index].released);
+  const [lengthOfMovie, setLengthOfMovie] = useState(topTenMovies[index].duration);
+  const [rating, setRating] = useState(topTenMovies[index].rating);
+  const [genre, setGenre] = useState(topTenMovies[index].type);
+  const [description, setDescription] = useState(topTenMovies[index].synopsis);
 
   const iterateMovie = (index) => {
     if(index !== (topTenMovies.length - 1)) {
@@ -32,6 +37,11 @@ const SwipingContainer = (props) => {
   useEffect(() => {
     setTitle(topTenMovies[index].title);
     setImageUrl(topTenMovies[index].image);
+    setYear(topTenMovies[index].released);
+    setLengthOfMovie(topTenMovies[index].runtime);
+    setRating(topTenMovies[index].rating);
+    setGenre(topTenMovies[index].type);
+    setDescription(topTenMovies[index].synopsis);
   });
   
   const onClickDislike = () => {
@@ -89,12 +99,12 @@ const SwipingContainer = (props) => {
           <StyledDiv padding={2}>
             <MovieDetail
               title={title}
-              year="2016"
-              lengthOfMovie="2h 28m"
-              rating="8/10"
-              genre="Thriller"
+              year={year}
+              lengthOfMovie={lengthOfMovie}
+              rating={rating}
+              genre={genre}
               imageURL={imageURL}
-              description="Inception is a 2010 science fiction action film written and directed by Christopher Nolan, who also produced the film with his wife, Emma Thomas. The film stars Leonardo DiCaprio as a professional thief who steals information by infiltrating the subconscious of his targets."
+              description={description}
             />
           </StyledDiv>
           <InsertEmoticonIcon
