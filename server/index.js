@@ -2,7 +2,6 @@ const express = require('express');
 const socketio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
-
 require('dotenv').config()
 
 const PORT = process.env.PORT || 5000;
@@ -18,6 +17,7 @@ app.use(cors());
 
 const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
 const { getTop10 } = require('./movies');
+const { initializeRoom, likeEvent, dislikeEvent } = require('./redis.repository');
 
 io.on('connection', (socket) => {
     // When a user disconnects from the socket, remove the user from the room and update the guest list
@@ -62,17 +62,21 @@ io.on('connection', (socket) => {
         console.log('getting top 10')
         getTop10().then((top10) => {
             // TODO add call to redis to initialize swiping room here
-            io.to(user.room).emit('sessionMembers', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
+            io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
         }).catch((error) => {
-            console.log('error getting list of top 10 movies from rapidapi')
+            console.log(`error getting list of top 10 movies from rapidapi: ${error}`)
             callback(error);
         });
         callback();
     });
 
-     // test 
-     socket.on('I am emitted from an imported socket!', () => {
-        console.log('successfully received emit from imported socket in swiping page')
+     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
+     socket.on('initialize_room', ({roomId, numGuests, movies}) => {
+        initializeRoom(roomId, numGuests, movies).then((result) => {
+            console.log(result);
+        }).catch((error) => {
+            console.log(`on initializing room, there was an error in redis: ${error}`);
+        });
     });
 
     // // stubbed match page test
@@ -113,6 +117,19 @@ io.on('connection', (socket) => {
         console.log('No Match signal received')
         io.to(room).emit('noMatchRedirect')
     })
+    socket.on('like_event', ({roomId, movieId, movieData}) => {
+        likeEvent(roomId, movieId).then((result) => {
+            if (result===0) {
+                // initiate match page
+                io.to(roomId).emit('matchRedirect', { matchedMovieId: movieId, matchedMovieData: movieData });
+            }
+            else if (result===1) {
+                // initiate end of movies
+            }
+        }).catch((error) => {
+            console.log(`error on like event to redis: ${error}`);
+        });
+    });
 });
 
 server.listen(PORT, () => {

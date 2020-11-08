@@ -11,7 +11,7 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
-    const [top10, setTop10] = useState([]);
+    const [topTenMovies, setTopTenMovies] = useState(null);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -68,14 +68,12 @@ const Lobby = ({location}) => {
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host, top10}) => {
-            // TODO do something with the returned data
-            console.log(top10)
-            setTop10(top10)
             setGoSwipe(true);
+            setTopTenMovies(top10);
+            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10});
         });
         return () => {socket.off('sessionMembers')};
     }, []);
-
 
     return (
         <div className="outerContainer">
@@ -100,10 +98,13 @@ const Lobby = ({location}) => {
                     :
                     <h2>Waiting for Host to start!</h2> 
                 }
-                { goSwipe ? <Redirect to={{ 
+                { goSwipe && topTenMovies!=null ? <Redirect to={{ 
                                 pathname: '/swiping',
                                 search:`?room=${roomId}`,
-                                state: {top10: top10}
+                                state: {
+                                    roomId: roomId,
+                                    topTenMovies: topTenMovies,
+                                }
                             }}
                             /> : null }
             </div>
