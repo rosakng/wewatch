@@ -5,7 +5,7 @@ import { Container, Row, Col } from 'reactstrap';
 import { Redirect } from "react-router-dom";
 import queryString from 'query-string';
 
-import socket from 'Socket'
+import socket from 'Socket';
 
 import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';
@@ -67,8 +67,8 @@ const SwipingContainer = (props) => {
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
-        console.log("inside redirect")
-        setNoMatch(true)
+        console.log("inside redirect");
+        setNoMatch(true);
    });
 
   //listen to match event
