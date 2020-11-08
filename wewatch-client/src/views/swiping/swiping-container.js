@@ -24,7 +24,9 @@ const SwipingContainer = (props) => {
   const [imageURL, setImageUrl] = useState(topTenMovies[index].image)
 
   const iterateMovie = (index) => {
-    setIndex(index + 1);
+    if(index !== (topTenMovies.length - 1)) {
+      setIndex(index + 1);
+    }
   };
 
   useEffect(() => {
@@ -33,6 +35,7 @@ const SwipingContainer = (props) => {
   });
   
   const onClickDislike = () => {
+    socket.emit('dislike_event', {roomId: roomId});
     iterateMovie(index);
   };
 

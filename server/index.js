@@ -99,11 +99,21 @@ io.on('connection', (socket) => {
                 io.to(roomId).emit('matchRedirect', { matchedMovieId: movieId, matchedMovieData: movieData });
             }
             else if (result===1) {
-                // initiate end of movies
+                // initiate swiping completed
             }
         }).catch((error) => {
             console.log(`error on like event to redis: ${error}`);
         });
+    });
+
+    socket.on('dislike_event', ({roomId}) => {
+        dislikeEvent(roomId).then((result) => {
+            if(result == 1) {
+                // initiate swiping completed
+            }
+        }).catch((error) => {
+            console.log(`error on dislike event to redis: ${error}`);
+        })
     });
 });
 
