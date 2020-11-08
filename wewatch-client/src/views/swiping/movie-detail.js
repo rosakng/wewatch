@@ -6,7 +6,7 @@ import BrushIcon from '@material-ui/icons/Brush';
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
 
 import theme from 'styles/theme';
-import StyledDiv from 'styles/styled-div'
+import StyledDiv from 'styles/styled-div';
 
 const MovieDetailContainer = styled.div`
   padding: ${theme.space[4]};
@@ -32,7 +32,7 @@ const DetailText = styled.span`
   `;
 
 const PhotoContainer = styled.div`
-  margin: ${theme.space[2]}
+  margin: ${theme.space[2]};
 `;
 
 const Image = styled.img`
@@ -45,7 +45,7 @@ const MovieDetail = ({
   title,
   rating,
   year,
-  genre,
+  mediaType,
   lengthOfMovie,
   imageURL,
   description,
@@ -73,7 +73,7 @@ const MovieDetail = ({
       <BrushIcon
           style={{fontSize: '40px'}}
       />
-      <DetailText>{genre}</DetailText>
+      <DetailText>{mediaType}</DetailText>
     </StyledDiv>
     <StyledDiv flex alignItems="center">
       <WatchLaterIcon
