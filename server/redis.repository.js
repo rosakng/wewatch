@@ -4,6 +4,8 @@ const client = redis.createClient();
 const hgetAsync = promisify(client.hget).bind(client);
 const hincrbyAsync = promisify(client.hincrby).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
+const delAsync = promisify(client.del).bind(client);
+
 
 /**
  * Creates a room key in Redis and sets:
@@ -77,6 +79,20 @@ const dislikeEvent = async (roomId) => {
 }
 
 /**
+ * Deletes room in Redis store by roomId
+ * 
+ * @param {String} roomId - The room ID.
+ * @returns {Integer} 1 - If room is deleted. 
+ */
+const purgeRoom = async (roomId) => {
+    if(!roomId) {
+        return Promise.reject('Room ID was empty or null.')
+    }
+    const numKeysRemoved = await delAsync(roomId);
+    return numKeysRemoved;
+}
+
+/**
  * Private function to validate if swiping is completed for room. 
  * 
  * @param {Integer} total_swipes - Total swipes in the room by all guests.
@@ -92,4 +108,4 @@ const swipingCompleted = (total_swipes, num_guests, num_movies) => {
     }
 }
 
-module.exports = { initializeRoom, likeEvent, dislikeEvent };
+module.exports = { initializeRoom, likeEvent, dislikeEvent, purgeRoom };
