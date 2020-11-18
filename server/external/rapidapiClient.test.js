@@ -6,9 +6,9 @@ jest.mock('../redis.repository');
 
 const { checkCache, getCachedCall, cacheData } = require('../redis.repository');
 
-// afterEach(() => {
-//     jest.clearAllMocks();
-// });
+afterEach(() => {
+    jest.clearAllMocks();
+});
 
 describe('API caching tests', () => {
     test('should fetch from API when URL not in cache', async () => {
