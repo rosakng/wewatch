@@ -1,4 +1,4 @@
-const { initializeRoom, likeEvent, dislikeEvent } = require('./redis.repository');
+const { initializeRoom, likeEvent, dislikeEvent, purgeRoom } = require('./redis.repository');
 const redis = require("redis");
 const client = redis.createClient();
 const { promisify } = require("util");
@@ -17,7 +17,7 @@ afterEach(() => {
 
 describe('initializeRoom() Tests', () => {
     test('Should create key/value with appropriate headings.', async () => {
-        return initializeRoom('abc', 7, [{'id': 123}, {'id': 234}]).then(async (numFields) => {
+        return initializeRoom('abc', 7, [{'netflixid': 123}, {'netflixid': 234}]).then(async (numFields) => {
             expect(numFields).toStrictEqual(5);
             let obj = await hgetallAsync('abc');
             expect(obj.numUsers).toStrictEqual("7");
@@ -30,7 +30,7 @@ describe('initializeRoom() Tests', () => {
     });
 
     test('Should return error if fields null.', async () => {
-        return initializeRoom(null, null, [{'id': 123}, {'id': 234}]).catch( async (error) => {
+        return initializeRoom(null, null, [{'netflixid': 123}, {'netflixid': 234}]).catch( async (error) => {
             expect(error).toStrictEqual('Fields were passed in that were null.');
             let obj = await hgetallAsync('abc');
             expect(obj).toStrictEqual(null);
@@ -41,7 +41,7 @@ describe('initializeRoom() Tests', () => {
 
 describe('likeEvent() Tests', () => {
     test('Should increment like counter for appropriate movie.', async () => {
-        return initializeRoom('abc', 2, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 2, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await likeEvent('abc', 234).then(async(res) => {
                 expect(res).toStrictEqual(-1);
                 let like_count = await hgetAsync('abc', 234);
@@ -54,7 +54,7 @@ describe('likeEvent() Tests', () => {
     });
 
     test('Should return error if fields null.', async () => {
-        return initializeRoom('abc', 2, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 2, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await likeEvent(null, null).catch(async(error) => {
                 expect(error).toStrictEqual('Fields were passed in that were null.');
                 let like_count = await hgetAsync('abc', 234);
@@ -67,7 +67,7 @@ describe('likeEvent() Tests', () => {
     });
 
     test('Should return correct result if match found.', async () => {
-        return initializeRoom('abc', 1, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 1, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await likeEvent('abc', 123).then(async(res) => {
                 expect(res).toStrictEqual(0);
                 let like_count = await hgetAsync('abc', 123);
@@ -80,7 +80,7 @@ describe('likeEvent() Tests', () => {
     });
 
     test('Should return correct result if swiping completed.', async () => {
-        return initializeRoom('abc', 2, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 2, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await likeEvent('abc', 123).then(async(res) => {
                 expect(res).toStrictEqual(-1);
                 let swipe_count = await hgetAsync('abc', 'total_swipes');
@@ -100,7 +100,7 @@ describe('likeEvent() Tests', () => {
 
 describe('dislikeEvent() Tests', () => {
     test('Should increment total_swipes.', async () => {
-        return initializeRoom('abc', 2, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 2, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await dislikeEvent('abc', 234).then(async(res) => {
                 expect(res).toStrictEqual(-1);
                 let swipe_count = await hgetAsync('abc', 'total_swipes');
@@ -111,7 +111,7 @@ describe('dislikeEvent() Tests', () => {
     });
 
     test('Should return error if fields null.', async () => {
-        return initializeRoom('abc', 2, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 2, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await dislikeEvent(null, null).catch(async(error) => {
                 expect(error).toStrictEqual('Room ID was empty or null.');
                 let swipe_count = await hgetAsync('abc', 'total_swipes');
@@ -122,7 +122,7 @@ describe('dislikeEvent() Tests', () => {
     });
 
     test('Should return correct result if swiping completed.', async () => {
-        return initializeRoom('abc', 2, [{'id': 123}, {'id': 234}]).then(async () => {
+        return initializeRoom('abc', 2, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
             await likeEvent('abc', 123);
             await likeEvent('abc', 234);
             await dislikeEvent('abc', 123).then(async(res) => {
@@ -139,3 +139,25 @@ describe('dislikeEvent() Tests', () => {
         });
     });
 });
+
+describe('purgeRoom() Tests', () => {
+    test('Should delete room from Redis.', async () => {
+        return initializeRoom('abc', 7, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
+            await purgeRoom('abc').then(async(res) => {
+                expect(res).toStrictEqual(1);
+                let obj = await hgetallAsync('abc');
+                expect(obj).toStrictEqual(null);
+            });
+            return flushallAsync();
+        });
+    });
+
+    test('Should return error if fields null.', async () => {
+        return initializeRoom('abc', 7, [{'netflixid': 123}, {'netflixid': 234}]).then(async () => {
+            await purgeRoom(null).catch(async(error) => {
+                expect(error).toStrictEqual('Room ID was empty or null.');
+            });
+            return flushallAsync();
+        });
+    });
+})
