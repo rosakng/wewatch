@@ -2,6 +2,7 @@ import React, { useState  } from "react";
 import { Redirect } from "react-router-dom";
 
 import './noMatch.css';
+import Layout from 'views/layout';
 
 const NoMatch = () => {
     const [cancel, setCancel] = useState(false);
@@ -12,14 +13,17 @@ const NoMatch = () => {
     }
     
     return (
-        <div className="noMatchHeroContainer">
-        { cancel ? <Redirect to='/'/> : null }
-            <h1>No Match :(</h1>
-            <h2>There were no movies that the group agreed on watching </h2>
-            <div className="buttonContainer">
-            <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
+        <Layout>
+            <div className="noMatchHeroContainer">
+            { cancel ? <Redirect to='/'/> : null }
+                <h1>No Match :(</h1>
+                <h2>There were no movies that the group agreed on watching </h2>
+                <div className="buttonContainer">
+                <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
+                </div>
             </div>
-        </div>
+        </Layout>
+        
     );
     }
  export default NoMatch

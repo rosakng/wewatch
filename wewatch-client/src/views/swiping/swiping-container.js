@@ -3,12 +3,12 @@ import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
 import { Redirect } from "react-router-dom";
-import queryString from 'query-string';
 
 import socket from 'Socket';
 
 import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';
+import Layout from 'views/layout';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = (props) => {  
@@ -75,50 +75,58 @@ const SwipingContainer = (props) => {
   });
 
   function SwipingCompletedScreen () {
-    return(<Container>{ match && matchedMovie != null ? <Redirect to={{ 
-      pathname: '/match',
-      state: {matchedMovie: matchedMovie}
-      }}/>: null }
-      { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1></Container>)
+    return(
+      <Layout>
+        <Container>{ match && matchedMovie != null ? <Redirect to={{ 
+        pathname: '/match',
+        state: {matchedMovie: matchedMovie}
+        }}/>: null }
+        { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1>
+        </Container>
+      </Layout>
+      
+    )
   }
 
   if (!SwipingCompleted){
   return (
-  <Container>
-    { match && matchedMovie != null ? <Redirect to={{ 
-                                pathname: '/match',
-                                state: {matchedMovie: matchedMovie}
-                            }}/>: null }
-    { noMatch ? <Redirect to='/noMatch'/> : null }
-    <Row>
-      <Col>
-      {props.location.state.topTenMovies && (
-        <StyledDiv flex alignItems="center" marginTop={2}>
-          <CloseIcon
-            style={{ color: theme.colors.red, fontSize: '60px'}}
-            onClick={onClickDislike}
-          />
-          <StyledDiv padding={2}>
-            <MovieDetail
-              title={title}
-              year={year}
-              lengthOfMovie={lengthOfMovie}
-              rating={rating}
-              mediaType={mediaType}
-              imageURL={imageURL}
-              description={description}
-            />
-          </StyledDiv>
-          <InsertEmoticonIcon
-            style={{ color: theme.colors.green, fontSize: '60px'}}
-            fontSize="large"
-            onClick={onClickLike}
-          />
-        </StyledDiv>
-      )}
-      </Col>
-    </Row>
-  </Container>
+    <Layout>
+      <Container>
+          { match && matchedMovie != null ? <Redirect to={{ 
+                                      pathname: '/match',
+                                      state: {matchedMovie: matchedMovie}
+                                  }}/>: null }
+          { noMatch ? <Redirect to='/noMatch'/> : null }
+          <Row>
+            <Col>
+            {props.location.state.topTenMovies && (
+              <StyledDiv flex alignItems="center" marginTop={2}>
+                <CloseIcon
+                  style={{ color: theme.colors.red, fontSize: '60px'}}
+                  onClick={onClickDislike}
+                />
+                <StyledDiv padding={2}>
+                  <MovieDetail
+                    title={title}
+                    year={year}
+                    lengthOfMovie={lengthOfMovie}
+                    rating={rating}
+                    mediaType={mediaType}
+                    imageURL={imageURL}
+                    description={description}
+                  />
+                </StyledDiv>
+                <InsertEmoticonIcon
+                  style={{ color: theme.colors.green, fontSize: '60px'}}
+                  fontSize="large"
+                  onClick={onClickLike}
+                />
+              </StyledDiv>
+            )}
+            </Col>
+          </Row>
+        </Container>
+    </Layout>
   );}
   else if (SwipingCompleted) {
     return(<SwipingCompletedScreen/>)
