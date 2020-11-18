@@ -9,6 +9,8 @@ import socket from 'Socket';
 import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';
 import Layout from 'views/layout';
+import Tooltip from 'views/tooltip';
+import ToolTipIcon from 'views/assets/tooltipIcon';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = (props) => {  
@@ -91,6 +93,14 @@ const SwipingContainer = (props) => {
   if (!SwipingCompleted){
   return (
     <Layout>
+      <StyledDiv flex paddingLeft={4} marginTop={3}>
+          <StyledDiv>Start Swiping!</StyledDiv>
+          <Tooltip
+            text={`Click the happy face if you would like to watch the movie, or click the X otherwise!`}
+          >
+            <ToolTipIcon fill={theme.colors.gray[2]} size="25px" />
+          </Tooltip>
+        </StyledDiv>
       <Container>
           { match && matchedMovie != null ? <Redirect to={{ 
                                       pathname: '/match',
