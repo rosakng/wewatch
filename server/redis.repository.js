@@ -4,6 +4,9 @@ const client = redis.createClient();
 const hgetAsync = promisify(client.hget).bind(client);
 const hincrbyAsync = promisify(client.hincrby).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
+const setexAsync = promisify(client.setex).bind(client);
+const getAsync = promisify(client.get).bind(client);
+const existsAsync = promisify(client.exists).bind(client);
 
 /**
  * Creates a room key in Redis and sets:
@@ -92,4 +95,44 @@ const swipingCompleted = (total_swipes, num_guests, num_movies) => {
     }
 }
 
-module.exports = { initializeRoom, likeEvent, dislikeEvent };
+// BLOCKER: IS THERE A WAY TO DO THIS WITHOUT PASSING ROOM ID AND HOW
+
+const checkCache = async (requestUrl) => {
+    try {
+        return await existsAsync(requestUrl);
+    } catch (error) {
+        return error;
+    }
+}
+
+/**
+ * This function should only be called AFTER checkCache() is called with a response of 1 (key exists)
+ * @param {String} requestUrl literal request URL that corresponds with a cached redis key
+ * @returns {Object} Returns JSON string of cached response
+ */
+const getCachedCall = async (requestUrl) => {
+    try {
+        return await getAsync(requestUrl);
+    } catch (error) {
+        return error
+    }
+}
+    
+
+/**
+ * 
+ * @param {String} requestUrl literal request URL that corresponds with a cached redis key
+ * @param {String} data response data in the form of a JSON string to be used later
+ * @returns {Integer} number of fields that were added
+ */
+const cacheData = async (requestUrl, data) => {
+    // corresponds to one day
+    const SECONDS = 86400;
+    try {
+        return await setexAsync(requestUrl, SECONDS, data); 
+    } catch (error) {
+        return error
+    }
+}
+
+module.exports = { initializeRoom, likeEvent, dislikeEvent, checkCache, getCachedCall, cacheData };
