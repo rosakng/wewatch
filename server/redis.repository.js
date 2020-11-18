@@ -95,8 +95,6 @@ const swipingCompleted = (total_swipes, num_guests, num_movies) => {
     }
 }
 
-// BLOCKER: IS THERE A WAY TO DO THIS WITHOUT PASSING ROOM ID AND HOW
-
 const checkCache = async (requestUrl) => {
     try {
         return await existsAsync(requestUrl);

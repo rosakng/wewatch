@@ -111,5 +111,5 @@ const getTop10 = async () => {
     }
 }
 
-module.exports = {getTop10}
+module.exports = {getTop10, makeQuery}
 
