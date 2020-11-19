@@ -45,6 +45,8 @@ export default {
       '60px', // 9
       '72px', // 10
       '84px', // 11
+      '96px', // 12
+      '108px', // 13
     ],
 
     lineHeight: {

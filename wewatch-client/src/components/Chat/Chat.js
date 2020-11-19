@@ -3,6 +3,7 @@ import queryString from 'query-string';
 import io from "socket.io-client";
 
 import './Chat.css';
+import Layout from 'views/layout';
 
 const ENDPOINT = 'http://localhost:5000';
 
@@ -35,15 +36,18 @@ const Chat = ({ location }) => {
     }, []);
 
     return (
-        <div className="outerContainer">
-            <div className="container">
-                <ul>
-                    {users.map(element => {
-                        return (<li>{element.name}</li>)
-                    })}
-                </ul>
-            </div>
-        </div>
+        <Layout>
+            <div className="outerContainer">
+                <div className="container">
+                    <ul>
+                        {users.map(element => {
+                            return (<li>{element.name}</li>)
+                        })}
+                    </ul>
+                </div>
+            </div>            
+        </Layout>
+
     );
 }
 
