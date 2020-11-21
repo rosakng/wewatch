@@ -13,6 +13,7 @@ const Lobby = ({location}) => {
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
     const [topTenMovies, setTopTenMovies] = useState(null);
+    console.log(location);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -27,7 +28,7 @@ const Lobby = ({location}) => {
     }
 
     useEffect(() => {
-        const { name, room } = queryString.parse(location.search);
+        const { name, room, reset, oldRoomId } = queryString.parse(location.search);
 
         // host user does not have room ID in query params
         if (room === undefined){ 
@@ -40,6 +41,9 @@ const Lobby = ({location}) => {
                 setRoomId(room)
                 setUsers(users)
                 setHostName(host)
+                if (reset){
+                    socket.emit('tryAgainUser', {oldRoomId: oldRoomId, newRoomId: room});
+                }
             })
             setName(name);
             return () => { socket.off('roomCreation')};
@@ -100,15 +104,19 @@ const Lobby = ({location}) => {
                         :
                         <h2>Waiting for Host to start!</h2> 
                     }
-                    { goSwipe && topTenMovies!=null ? <Redirect to={{ 
-                                    pathname: '/swiping',
-                                    search:`?room=${roomId}`,
-                                    state: {
-                                        roomId: roomId,
-                                        topTenMovies: topTenMovies,
-                                    }
-                                }}
-                                /> : null }
+                    { goSwipe && topTenMovies!=null ?
+                        <Redirect to={{ 
+                            pathname: '/swiping',
+                            search:`?room=${roomId}`,
+                            state: {
+                                isHost: name == hostName,
+                                name: name,
+                                roomId: roomId,
+                                topTenMovies: topTenMovies,
+                            }}}
+                        />
+                        : null
+                    }
                 </div>
             </div>            
         </Layout>

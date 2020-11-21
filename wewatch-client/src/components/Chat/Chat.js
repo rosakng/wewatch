@@ -33,6 +33,7 @@ const Chat = ({ location }) => {
         socket.on("roomData", ({ users }) => {
             setUsers(users);
         });
+        return () => { socket.off('roomData')};
     }, []);
 
     return (

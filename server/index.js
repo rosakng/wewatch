@@ -17,7 +17,7 @@ app.use(cors());
 
 const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
 const { getTop10 } = require('./movies');
-const { initializeRoom, likeEvent, dislikeEvent } = require('./redis.repository');
+const { initializeRoom, likeEvent, dislikeEvent, purgeRoom } = require('./redis.repository');
 
 io.on('connection', (socket) => {
     // When a user disconnects from the socket, remove the user from the room and update the guest list
@@ -53,6 +53,23 @@ io.on('connection', (socket) => {
 
         callback();
     });
+
+    socket.on('try_again_event', ({roomId}) => {
+        console.log('try again event emitted');
+        io.to(roomId).emit('tryAgainRedirectHost');
+    });
+
+    socket.on('tryAgainUser', ({oldRoomId, newRoomId}) => {
+        io.to(oldRoomId).emit('tryAgainRedirectUser', {newRoomId:newRoomId})
+        //purge previous room
+        purgeRoom(oldRoomId).then((result) => {
+            if(result) {
+                console.log("previous room has been purged");
+            }
+        }).catch((error) => {
+            console.log(`error on try again event to redis: ${error}`);
+        })
+    })
 
     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
     socket.on('begin', ( user , callback) => {
