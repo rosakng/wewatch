@@ -122,7 +122,7 @@ const SwipingContainer = (props) => {
                                 state: {isHost: isHost,
                                         roomId: roomId,
                                         name: name}
-                              }}/> : null }}
+                              }}/> : null }
           <Row>
             <Col>
             {props.location.state.topTenMovies && (

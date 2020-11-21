@@ -116,6 +116,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('try_again_event', ({roomId}) => {
+        console.log("hello")
         io.to(roomId).emit('tryAgainRedirectHost')
     });
 

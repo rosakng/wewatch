@@ -28,8 +28,11 @@ const NoMatch = (props) => {
 
     //listen to try again event
     useEffect(() => {
+        
         socket.on('tryAgainRedirectHost', () => {
+            console.log(props)
             if (isHost) {
+                console.log("here")
                 setTryAgainHost(true);
             } 
        })
@@ -54,7 +57,10 @@ const NoMatch = (props) => {
                 <h1>No Match :(</h1>
                 <h2>There were no movies that the group agreed on watching </h2>
                 <div className="buttonContainer">
-                <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
+                {isHost ? <button className={'button mt-20'} type="button" onClick={tryAgainEmit}>Try Again</button> : null}
+                
+                
+                    <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
                 </div>
             </div>
         </Layout>

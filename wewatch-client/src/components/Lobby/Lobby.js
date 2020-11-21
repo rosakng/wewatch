@@ -110,6 +110,8 @@ const Lobby = ({location}) => {
                                     pathname: '/swiping',
                                     search:`?room=${roomId}`,
                                     state: {
+                                        isHost: name == hostName,
+                                        name: name,
                                         roomId: roomId,
                                         topTenMovies: topTenMovies,
                                     }
