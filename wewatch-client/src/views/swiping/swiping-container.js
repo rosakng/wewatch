@@ -23,7 +23,6 @@ const SwipingContainer = (props) => {
   const roomId = props.location.state.roomId;
   const isHost = props.location.state.isHost;
   const name = props.location.state.name;
-  console.log(isHost);
 
   const [index, setIndex]  = useState(0);
   const [title, setTitle] = useState(topTenMovies[index].title);
@@ -66,7 +65,6 @@ const SwipingContainer = (props) => {
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
-        console.log("inside redirect");
         setNoMatch(true);
    });
 
@@ -77,8 +75,6 @@ const SwipingContainer = (props) => {
   useEffect(() => {
       //listen to match event
       socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
-        console.log(matchedMovieId);
-        console.log(matchedMovieData);
         setMatchedMovie(matchedMovieData);
         setMatch(true);
       });

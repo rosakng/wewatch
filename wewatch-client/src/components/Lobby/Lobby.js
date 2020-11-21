@@ -43,9 +43,6 @@ const Lobby = ({location}) => {
                 setHostName(host)
 
                 if (reset){
-                    console.log("reset is true")
-                    console.log(oldRoomId)
-                    console.log(roomId)
                     socket.emit('tryAgainUser', {oldRoomId: oldRoomId, newRoomId: room});
                 }
             })
