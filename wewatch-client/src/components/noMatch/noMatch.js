@@ -10,10 +10,10 @@ const NoMatch = (props) => {
     const [cancel, setCancel] = useState(false);
     const [tryAgain, setTryAgain] = useState(false);
     const [tryAgainHost, setTryAgainHost] = useState(false);
-    const [name, setName] = useState(props.location.state.name);
     const [newRoomId, setNewRoomId] = useState('');
     const isHost = props.location.state.isHost;
     const roomId = props.location.state.roomId;
+    const name = props.location.state.name
 
     //takes user back to landing page
     const cancelSession = () => {
