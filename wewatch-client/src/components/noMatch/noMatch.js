@@ -58,8 +58,6 @@ const NoMatch = (props) => {
                 <h2>There were no movies that the group agreed on watching </h2>
                 <div className="buttonContainer">
                 {isHost ? <button className={'button mt-20'} type="button" onClick={tryAgainEmit}>Try Again</button> : null}
-                
-                
                     <button className={'button mt-20'} type="button" onClick={cancelSession}>Cancel</button>
                 </div>
             </div>

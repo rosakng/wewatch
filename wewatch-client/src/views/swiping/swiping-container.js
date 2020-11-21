@@ -69,7 +69,6 @@ const SwipingContainer = (props) => {
    });
 
    return () => { socket.off('noMatchRedirect')};
-
   });
 
   useEffect(() => {

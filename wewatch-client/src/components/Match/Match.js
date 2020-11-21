@@ -9,7 +9,6 @@ import Layout from 'views/layout';
 
 const Match = (props) => {
     const movieData = props.location.state.matchedMovie;
-    console.log(props)
     return (
         <Layout>
             <Container>
