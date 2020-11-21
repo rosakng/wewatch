@@ -6,11 +6,10 @@ const getFromCache = async (requestUrl) => {
 	try {
         const dataString = await getCachedCall(requestUrl);
         if (dataString !== null){
-            const data = JSON.parse(dataString);
-            return data;
+            return JSON.parse(dataString);
         }
         else { 
-            console.log('expected data, but found none');
+            console.log('getFromCache(): expected data, but found none');
             return null;
         }
 	} catch (error) {
@@ -39,7 +38,7 @@ const makeQuery = async (requestUrl, options) => {
     try {
         const keyExists = await checkCache(requestUrl);
         if (keyExists === 1){
-            console.log('key exists in cache, checking now')
+            console.log('makeQuery(): found cached version of API query')
             try {
                 const data = await getFromCache (requestUrl);
                 return data;
@@ -50,13 +49,12 @@ const makeQuery = async (requestUrl, options) => {
         } 
         // data not in cache
         else {
-            console.log('key not in cache, calling API');
+            console.log('makeQuery(): key not in cache, calling API');
             try {
                 // make API call, then cache result for future use
-                console.log('making call')
                 const response = await axios.request(options);
                 const pushstatus = await pushToRedis(requestUrl, response.data);
-                console.log('data cache: ' + pushstatus);
+                console.log('makeQuery(): caching result ' + pushstatus);
                 return response.data;
             } catch (error) {
                 console.log(error);
@@ -73,9 +71,6 @@ const makeQuery = async (requestUrl, options) => {
 // this function makes an API call to the uNoGs unofficial netflix API, provided by rapidapi
 // changing the parameters of the API call is difficult, consult the rapidapi platform
 const getTop10 = async () => {
-
-    console.log('setting up api call')
-
     var options = {
       method: 'GET',
       url: 'https://rapidapi.p.rapidapi.com/aaapi.cgi',
@@ -96,14 +91,10 @@ const getTop10 = async () => {
 
     // retain request URL to query redis or cache response in redis later
     const requestUrl = axios.getUri(options)
-    console.log('built URI of the API request:')
-    console.log(requestUrl);
 
-    console.log('making query now');
     try {
         const data = await makeQuery(requestUrl, options);
         top10 = data.ITEMS.slice(-10);
-        console.log(top10);
         return top10;
     } catch (error) {
         console.log(error);

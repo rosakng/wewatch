@@ -128,7 +128,7 @@ const getCachedCall = async (requestUrl) => {
     try {
         return await getAsync(requestUrl);
     } catch (error) {
-        return error
+        return error;
     }
 }
     
@@ -137,7 +137,7 @@ const getCachedCall = async (requestUrl) => {
  * 
  * @param {String} requestUrl literal request URL that corresponds with a cached redis key
  * @param {String} data response data in the form of a JSON string to be used later
- * @returns {Integer} number of fields that were added
+ * @returns {Integer} number of fields that were added, should always be 1
  */
 const cacheData = async (requestUrl, data) => {
     // corresponds to one day
@@ -145,7 +145,7 @@ const cacheData = async (requestUrl, data) => {
     try {
         return await setexAsync(requestUrl, SECONDS, data); 
     } catch (error) {
-        return error
+        return error;
     }
 }
 
