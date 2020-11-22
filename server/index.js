@@ -16,7 +16,7 @@ app.use(router);
 app.use(cors());
 
 const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
-const { getTop10 } = require('./movies');
+const { getTop10 } = require('./external/rapidapiClient');
 const { initializeRoom, likeEvent, dislikeEvent, purgeRoom } = require('./redis.repository');
 
 io.on('connection', (socket) => {
@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
     });
 
     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
-    socket.on('begin', ( user , callback) => {
+    socket.on('begin', (user , callback) => {
         console.log('begin session signal received')
 
         // get list of top 10 movies to send to all guests of the room

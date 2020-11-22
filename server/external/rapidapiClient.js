@@ -1,6 +1,6 @@
 const axios = require("axios").default;
 const { checkCache, getCachedCall, cacheData } = require('../redis.repository');
-
+const { genreIndex } = require('./genres');
 
 const getFromCache = async (requestUrl) => {
 	try {
@@ -40,7 +40,7 @@ const makeQuery = async (requestUrl, options) => {
         if (keyExists === 1){
             console.log('makeQuery(): found cached version of API query')
             try {
-                const data = await getFromCache (requestUrl);
+                const data = await getFromCache(requestUrl);
                 return data;
             } catch (error) {
                 console.log(error);
@@ -71,7 +71,7 @@ const makeQuery = async (requestUrl, options) => {
 // this function makes an API call to the uNoGs unofficial netflix API, provided by rapidapi
 // changing the parameters of the API call is difficult, consult the rapidapi platform
 const getTop10 = async () => {
-    var options = {
+    let options = {
       method: 'GET',
       url: 'https://rapidapi.p.rapidapi.com/aaapi.cgi',
       params: {
@@ -102,5 +102,116 @@ const getTop10 = async () => {
     }
 }
 
-module.exports = {getTop10, makeQuery}
+
+// gets all genre IDs associated with each genre for more advanced filtering
+const getGenreIds = async () => {
+    let options = {
+        method: 'GET',
+        url: 'https://unogs-unogs-v1.p.rapidapi.com/api.cgi',
+        params: {t: 'genres'},
+        headers: {
+            'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+            'x-rapidapi-host': 'unogs-unogs-v1.p.rapidapi.com'
+        }
+    }
+
+    // retain request URL to query redis or cache response in redis later
+    const requestUrl = axios.getUri(options)
+
+    try {
+        const data = await makeQuery(requestUrl, options);
+        const items = data.ITEMS;
+        console.log(items);
+
+        let genreIds = {};
+
+        // action
+        genreIds.action = items[genreIndex.action]['All Action'];
+
+        // anime
+        genreIds.anime = items[genreIndex.anime]['All Anime'];
+
+        // childrens
+        genreIds.childrens = items[genreIndex.childrens]['All Childrens'];
+
+        // classics
+        genreIds.classics = items[genreIndex.classics]['All Classics'];
+
+        // comedies
+        genreIds.comedies = items[genreIndex.comedies]['All Comedies'];
+
+        // documentaries
+        genreIds.documentaries = items[genreIndex.documentaries]['All Documentaries'];
+
+        // dramas
+        genreIds.dramas = items[genreIndex.dramas]['All Dramas'];
+
+        // horror
+        genreIds.horror = items[genreIndex.horror]['All Horror'];
+
+        // independent
+        genreIds.independent = items[genreIndex.independent]['All Independent'];
+
+        // romance 
+        genreIds.romance = items[genreIndex.romance]['All Romance'];
+
+        // sci-fi
+        genreIds.sci_fi = items[genreIndex.sci_fi]['All Sci-Fi'];
+
+        // thriller
+        genreIds.thriller = items[genreIndex.thriller]['All Thrillers'];
+
+        console.log(genreIds);
+
+        return genreIds;
+
+    } catch (error) {
+        console.log(error)
+        return error;
+    }
+}
+10306, 10499,   10504,  10719
+const getFiltered = async (genre, minIrate, maxIrate, minNrate, maxNrate) => {
+    try {
+        // get genreIds first to construct API call
+        const allGenreIds = await getGenreIds();
+        // assign first from list of genreIds for now since multiple genre Id query not possible
+        const genreIds = allGenreIds[genre];
+        const genreId = genreIds[0];
+
+        let options = {
+            method: 'GET',
+            url: 'https://rapidapi.p.rapidapi.com/aaapi.cgi',
+            params: {
+            q: `-!1900,2020-!${minNrate},${maxNrate}-!${minIrate},${maxIrate}-!${genreId}-!Movie-!Any-!Any-!gt10000-!{downloadable}`,
+            t: 'ns',
+            cl: '33',
+            st: 'adv',
+            ob: 'Relevance',
+            p: '1',
+            sa: 'and'
+            },
+            headers: {
+            'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+            'x-rapidapi-host': 'unogs-unogs-v1.p.rapidapi.com'
+            }
+        };
+    
+        // retain request URL to query redis or cache response in redis later
+        const requestUrl = axios.getUri(options)
+    
+        try {
+            // return only the first 20 in the fetched list
+            const data = await makeQuery(requestUrl, options);
+            return data.ITEMS.slice(0, 20);
+        } catch (error) {
+            console.log(error);
+            return error;
+        }
+    } catch (error) {
+        console.log('error getting genres: ' + error)
+        return error;
+    }
+}
+module.exports = {getTop10, getFiltered, makeQuery}
 
