@@ -27,7 +27,7 @@ const Lobby = ({location}) => {
     }
 
     useEffect(() => {
-        const { name, room } = queryString.parse(location.search);
+        const { name, room, reset, oldRoomId } = queryString.parse(location.search);
 
         // host user does not have room ID in query params
         if (room === undefined){ 
@@ -36,10 +36,15 @@ const Lobby = ({location}) => {
                     alert(error);
                 }
             });
+        
             socket.on('roomCreation', ({ room , users, host}) => {
                 setRoomId(room)
                 setUsers(users)
                 setHostName(host)
+
+                if (reset){
+                    socket.emit('tryAgainUser', {oldRoomId: oldRoomId, newRoomId: room});
+                }
             })
             setName(name);
             return () => { socket.off('roomCreation')};
@@ -54,6 +59,7 @@ const Lobby = ({location}) => {
             setRoomId(room);
             setName(name);
         }
+
 
     }, [location.search]);
 
@@ -104,6 +110,8 @@ const Lobby = ({location}) => {
                                     pathname: '/swiping',
                                     search:`?room=${roomId}`,
                                     state: {
+                                        isHost: name == hostName,
+                                        name: name,
                                         roomId: roomId,
                                         topTenMovies: topTenMovies,
                                     }

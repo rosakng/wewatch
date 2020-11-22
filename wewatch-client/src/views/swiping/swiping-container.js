@@ -21,6 +21,8 @@ const SwipingContainer = (props) => {
 
   const topTenMovies = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
+  const isHost = props.location.state.isHost;
+  const name = props.location.state.name;
 
   const [index, setIndex]  = useState(0);
   const [title, setTitle] = useState(topTenMovies[index].title);
@@ -63,27 +65,35 @@ const SwipingContainer = (props) => {
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
-        console.log("inside redirect");
         setNoMatch(true);
    });
 
-  //listen to match event
-    socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
-      console.log(matchedMovieId);
-      console.log(matchedMovieData);
-      setMatchedMovie(matchedMovieData);
-      setMatch(true);
-    });
+   return () => { socket.off('noMatchRedirect')};
   });
+
+  useEffect(() => {
+      //listen to match event
+      socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
+        setMatchedMovie(matchedMovieData);
+        setMatch(true);
+      });
+  
+      return () => { socket.off('matchRedirect')};
+  })
 
   function SwipingCompletedScreen () {
     return(
       <Layout>
         <Container>{ match && matchedMovie != null ? <Redirect to={{ 
-        pathname: '/match',
-        state: {matchedMovie: matchedMovie}
-        }}/>: null }
-        { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1>
+      pathname: '/match',
+      state: {matchedMovie: matchedMovie}
+      }}/>: null }
+      { noMatch ? <Redirect to={{
+        pathname: '/noMatch',
+        state: {isHost: isHost,
+                roomId: roomId,
+                name: name}
+      }}/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1>
         </Container>
       </Layout>
       
@@ -102,11 +112,16 @@ const SwipingContainer = (props) => {
           </Tooltip>
         </StyledDiv>
       <Container>
-          { match && matchedMovie != null ? <Redirect to={{ 
-                                      pathname: '/match',
-                                      state: {matchedMovie: matchedMovie}
-                                  }}/>: null }
-          { noMatch ? <Redirect to='/noMatch'/> : null }
+            { match && matchedMovie != null ? <Redirect to={{ 
+                                pathname: '/match',
+                                state: {matchedMovie: matchedMovie}
+                            }}/>: null }
+    { noMatch ? <Redirect to={{
+                                pathname: '/noMatch',
+                                state: {isHost: isHost,
+                                        roomId: roomId,
+                                        name: name}
+                              }}/> : null }
           <Row>
             <Col>
             {props.location.state.topTenMovies && (
