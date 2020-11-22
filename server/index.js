@@ -42,8 +42,6 @@ io.on('connection', (socket) => {
 
     });
 
-
-
     // When a user joins a room, add the user to the room and update the room list
     socket.on('join', ({ name, room }, callback) => {
         const { error, user } = addUser({ id: socket.id, name, room });
@@ -55,23 +53,6 @@ io.on('connection', (socket) => {
 
         callback();
     });
-
-    socket.on('try_again_event', ({roomId}) => {
-        console.log('try again event emitted');
-        io.to(roomId).emit('tryAgainRedirectHost');
-    });
-
-    socket.on('tryAgainUser', ({oldRoomId, newRoomId}) => {
-        io.to(oldRoomId).emit('tryAgainRedirectUser', {newRoomId:newRoomId})
-        //purge previous room
-        purgeRoom(oldRoomId).then((result) => {
-            if(result) {
-                console.log("previous room has been purged");
-            }
-        }).catch((error) => {
-            console.log(`error on try again event to redis: ${error}`);
-        })
-    })
 
     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
     socket.on('begin', ( user , callback) => {
