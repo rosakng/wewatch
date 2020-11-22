@@ -67,7 +67,6 @@ const SwipingContainer = (props) => {
     socket.on('noMatchRedirect', () => {
         setNoMatch(true);
    });
-
    return () => { socket.off('noMatchRedirect')};
   });
 
@@ -85,15 +84,20 @@ const SwipingContainer = (props) => {
     return(
       <Layout>
         <Container>{ match && matchedMovie != null ? <Redirect to={{ 
-      pathname: '/match',
-      state: {matchedMovie: matchedMovie}
-      }}/>: null }
-      { noMatch ? <Redirect to={{
-        pathname: '/noMatch',
-        state: {isHost: isHost,
-                roomId: roomId,
-                name: name}
-      }}/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1>
+          pathname: '/match',
+          state: {matchedMovie: matchedMovie}
+          }}/>: null }
+          { noMatch ? 
+            <Redirect to={{
+              pathname: '/noMatch',
+              state: {isHost: isHost,
+                      roomId: roomId,
+                      name: name}
+              }}/>
+            : null }
+          <h1 style={{'text-align': "center", 'margin-top': '60px'}}>
+            You've seen all potential movies for recommendation, please wait as your the others finish swiping!
+          </h1>
         </Container>
       </Layout>
       
@@ -112,16 +116,25 @@ const SwipingContainer = (props) => {
           </Tooltip>
         </StyledDiv>
       <Container>
-            { match && matchedMovie != null ? <Redirect to={{ 
-                                pathname: '/match',
-                                state: {matchedMovie: matchedMovie}
-                            }}/>: null }
-    { noMatch ? <Redirect to={{
-                                pathname: '/noMatch',
-                                state: {isHost: isHost,
-                                        roomId: roomId,
-                                        name: name}
-                              }}/> : null }
+          { match && matchedMovie != null ?
+            <Redirect to={{ 
+              pathname: '/match',
+              state: {
+                matchedMovie: matchedMovie,
+                isHost: isHost,
+                roomId: roomId,
+                name: name
+                }
+              }}/>
+            : null }
+          { noMatch ?
+            <Redirect to={{
+              pathname: '/noMatch',
+              state: {
+                isHost: isHost,
+                roomId: roomId,
+                name: name}
+            }}/> : null }
           <Row>
             <Col>
             {props.location.state.topTenMovies && (
