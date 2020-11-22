@@ -71,13 +71,14 @@ const SwipingContainer = (props) => {
   });
 
   useEffect(() => {
-    //listen to match event
-    socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
-      setMatchedMovie(matchedMovieData);
-      setMatch(true);
-    });
-    return () => { socket.off('matchRedirect')};
-  });
+      //listen to match event
+      socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
+        setMatchedMovie(matchedMovieData);
+        setMatch(true);
+      });
+  
+      return () => { socket.off('matchRedirect')};
+  })
 
   function SwipingCompletedScreen () {
     return(

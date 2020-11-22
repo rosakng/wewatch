@@ -13,7 +13,6 @@ const Lobby = ({location}) => {
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
     const [topTenMovies, setTopTenMovies] = useState(null);
-    console.log(location);
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
@@ -37,6 +36,7 @@ const Lobby = ({location}) => {
                     alert(error);
                 }
             });
+        
             socket.on('roomCreation', ({ room , users, host}) => {
                 setRoomId(room)
                 setUsers(users)
@@ -58,6 +58,7 @@ const Lobby = ({location}) => {
             setRoomId(room);
             setName(name);
         }
+
 
     }, [location.search]);
 
