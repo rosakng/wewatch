@@ -38,7 +38,7 @@ const SwipingContainer = (props) => {
   const [newRoomId, setNewRoomId] = useState('');
 
   const iterateMovie = (index) => {
-    if (index !== (topTenMovies.length - 1)) {
+    if(index !== (topTenMovies.length - 1)) {
       setIndex(index + 1);
     } else {
       setSwipingCompleted(true)
@@ -56,13 +56,13 @@ const SwipingContainer = (props) => {
   });
 
   const onClickDislike = () => {
-    socket.emit('dislike_event', { roomId: roomId });
+    socket.emit('dislike_event', {roomId: roomId});
     iterateMovie(index);
   };
 
   const onClickLike = () => {
     const movieId = topTenMovies[index].netflixid;
-    socket.emit('like_event', { roomId: roomId, movieId: movieId, movieData: topTenMovies[index] });
+    socket.emit('like_event', { roomId: roomId, movieId: movieId, movieData: topTenMovies[index]});
     iterateMovie(index);
   }
 
@@ -88,10 +88,8 @@ const SwipingContainer = (props) => {
     socket.emit('try_again_event', { roomId: roomId })
   }
 
-  //listen to try again event
   useEffect(() => {
     socket.on('tryAgainRedirectHost', () => {
-      console.log(1)
       if (isHost) {
         setEndSessionHost(true);
       }
@@ -99,10 +97,9 @@ const SwipingContainer = (props) => {
     return () => { socket.off('tryAgainRedirectHost') };
   });
 
-  //listen to try again event for users
   useEffect(() => {
     socket.on('tryAgainRedirectUser', ({ newRoomId }) => {
-      setNewRoomId(newRoomId)
+      setNewRoomId(newRoomId);
       setEndSessionUser(true);
     });
     return () => { socket.off('tryAgainRedirectUser') };
