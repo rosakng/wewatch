@@ -5,6 +5,7 @@ import { Redirect } from "react-router-dom";
 import './Lobby.css';
 import Layout from 'views/layout';
 import socket from 'Socket'
+import { Input } from "@material-ui/core";
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -12,12 +13,32 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
-    const [topTenMovies, setTopTenMovies] = useState(null);
+    const [movieList, setMovieList] = useState(null);
+
+    // filters
+    const [genreIds, setGenreIds] = useState(null);
+    const [genre, setGenre] = useState('');
+    const [minIrate, setMinIrate] = useState();
+    const [maxIrate, setMaxIrate] = useState();
+    const [minNrate, setMinNrate] = useState();
+    const [maxNrate, setMaxNrate] = useState();
+
+    const createGenreDropdown = () => {
+        let genres = [];
+        for (const key in genreIds){
+            genres.push(<option value={key}>{key}</option>)
+        }
+        return genres;
+    }
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
         console.log(users[0])
-        socket.emit('begin', users[0], (error) => {
+        console.log(genre)
+        console.log(genreIds)
+        console.log(genreIds.genre)
+        const filters = {genre: genre, genreId: genreIds.genre[0], minIrate:minIrate, maxIrate:maxIrate,  minNrate:minNrate, maxNrate:maxNrate};
+        socket.emit('begin', users[0], filters, (error) => {
             console.log('inside')
             if (error) {
                 alert(error);
@@ -37,10 +58,12 @@ const Lobby = ({location}) => {
                 }
             });
         
-            socket.on('roomCreation', ({ room , users, host}) => {
+            socket.on('roomCreation', ({ room , users, host, genreIds }) => {
                 setRoomId(room)
                 setUsers(users)
                 setHostName(host)
+                setGenreIds(genreIds);
+                console.log(genreIds);
 
                 if (reset){
                     socket.emit('tryAgainUser', {oldRoomId: oldRoomId, newRoomId: room});
@@ -74,10 +97,10 @@ const Lobby = ({location}) => {
 
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
-        socket.on('sessionMembers', ({roomId, users, host, top10}) => {
+        socket.on('sessionMembers', ({roomId, users, host, movieList}) => {
             setGoSwipe(true);
-            setTopTenMovies(top10);
-            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10});
+            setMovieList(movieList);
+            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: movieList});
         });
         return () => {socket.off('sessionMembers')};
     }, []);
@@ -106,18 +129,69 @@ const Lobby = ({location}) => {
                         :
                         <h2>Waiting for Host to start!</h2> 
                     }
-                    { goSwipe && topTenMovies!=null ? <Redirect to={{ 
+                    { goSwipe && movieList!=null ? <Redirect to={{ 
                                     pathname: '/swiping',
                                     search:`?room=${roomId}`,
                                     state: {
                                         isHost: name == hostName,
                                         name: name,
                                         roomId: roomId,
-                                        topTenMovies: topTenMovies,
+                                        topTenMovies: movieList,
                                     }
                                 }}
                                 /> : null }
                 </div>
+                { name === hostName && genreIds!=null?
+                    <div className="container">
+                    <h1>Filter by:</h1>
+                    
+                    <label>
+                        Genre:
+                        <select  onChange={(event) => {
+                            console.log(event);
+                            setGenre(event.target.value)
+                            console.log(event.target.value)
+                            console.log(genre)
+                            }}>
+                            {createGenreDropdown()}
+                        </select>
+                    </label>
+                    
+                    <div>
+                        <label>
+                            Minimum IMDB rating (out of 10)
+                            <input placeholder="5" type="text" onChange={(event) => setMinIrate(event.target.value)} />
+                        </label>
+                        
+                    </div>
+                    <div>
+                        <label>
+                            Maximum IMDB rating (out of 10)
+                            <input placeholder="10" type="text" onChange={(event) => setMaxIrate(event.target.value)} />
+                        </label>
+                        
+                    </div>
+                    <div>
+                        <label>
+                            Minimum Netflix rating (out of 5)
+                            <input placeholder="2" type="text" onChange={(event) => setMinNrate(event.target.value)} />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Maximum Netflix rating (out of 5)
+                            <input placeholder="5" type="text" onChange={(event) => setMaxNrate(event.target.value)} />
+                        </label>
+                    </div>
+                    {// TODO 
+                    // ADD DROPDOWN FOR GENRE SELECTION x
+                    // ADD 2 TEXT INPUTS FOR MIN AND MAX IMDB RATING
+                    // ADD 2 TEXT INPUTS FOR MIN AND MAX NETFLIX RATING
+                    }
+
+                    </div> : null
+                }
+                
             </div>            
         </Layout>
 

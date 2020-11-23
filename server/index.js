@@ -16,7 +16,7 @@ app.use(router);
 app.use(cors());
 
 const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
-const { getTop10 } = require('./external/rapidapiClient');
+const { getTop10, getFiltered, getGenreIds } = require('./external/rapidapiClient');
 const { initializeRoom, likeEvent, dislikeEvent, purgeRoom } = require('./redis.repository');
 
 io.on('connection', (socket) => {
@@ -28,16 +28,21 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('create', ({ name }, callback) => {
+    socket.on('create', async ({ name }, callback) => {
         console.log('create request received')
         const { error, user } = addHost({ id: socket.id, name });
 
         if (error) return callback(error);
 
         socket.join(user.room);
-
-        io.to(user.room).emit('roomCreation', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room)});
-
+        try {
+            const genreIds = await getGenreIds(); 
+            console.log(genreIds);
+            io.to(user.room).emit('roomCreation', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), genreIds: genreIds});
+        } catch (error) {
+            console.log(error)
+            callback(error)
+        }
         callback();
 
     });
@@ -57,18 +62,34 @@ io.on('connection', (socket) => {
     });
 
     // received signal to start a session from the host of a room, emit redirect signal to all guests and host
-    socket.on('begin', (user , callback) => {
+    socket.on('begin', async (user, filters, callback) => {
         console.log('begin session signal received')
-
-        // get list of top 10 movies to send to all guests of the room
-        console.log('getting top 10')
-        getTop10().then((top10) => {
-            // TODO add call to redis to initialize swiping room here
-            io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
-        }).catch((error) => {
-            console.log(`error getting list of top 10 movies from rapidapi: ${error}`)
+        try {
+            const movieList = await getFiltered(filters.genre, filters.minIrate, filters.maxIrate, filters.minNrate, filters.maxNrate);
+            io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), movieList: movieList});
+        } catch (error) {
+            console.log(`error getting filtered list of movies from rapidapi: ${error}`)
             callback(error);
-        });
+        }
+
+        // getFiltered('horror', 6, 10, 3, 5).then((movielist) => {
+        //     io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: movielist});
+
+        // }).catch((error) => {
+        //     console.log(`error getting filtered list of movies from rapidapi: ${error}`)
+        //     callback(error);
+
+        // })
+        
+
+        // // get list of top 10 movies to send to all guests of the room
+        // console.log('getting top 10')
+        // getTop10().then((top10) => {
+        //     io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
+        // }).catch((error) => {
+        //     console.log(`error getting list of top 10 movies from rapidapi: ${error}`)
+        //     callback(error);
+        // });
         callback();
     });
 

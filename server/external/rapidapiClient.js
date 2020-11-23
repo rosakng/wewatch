@@ -125,6 +125,9 @@ const getGenreIds = async () => {
 
         let genreIds = {};
 
+        // all
+        genreIds.all = [0];
+
         // action
         genreIds.action = items[genreIndex.action]['All Action'];
 
@@ -170,15 +173,9 @@ const getGenreIds = async () => {
         return error;
     }
 }
-10306, 10499,   10504,  10719
-const getFiltered = async (genre, minIrate, maxIrate, minNrate, maxNrate) => {
-    try {
-        // get genreIds first to construct API call
-        const allGenreIds = await getGenreIds();
-        // assign first from list of genreIds for now since multiple genre Id query not possible
-        const genreIds = allGenreIds[genre];
-        const genreId = genreIds[0];
 
+const getFiltered = async (genreId, minIrate, maxIrate, minNrate, maxNrate) => {
+    try {
         let options = {
             method: 'GET',
             url: 'https://rapidapi.p.rapidapi.com/aaapi.cgi',
@@ -213,5 +210,5 @@ const getFiltered = async (genre, minIrate, maxIrate, minNrate, maxNrate) => {
         return error;
     }
 }
-module.exports = {getTop10, getFiltered, makeQuery}
+module.exports = {getTop10, getFiltered, getGenreIds, makeQuery}
 
