@@ -14,27 +14,28 @@ import ToolTipIcon from 'views/assets/tooltipIcon';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
 const SwipingContainer = (props) => {  
+  console.log(props.location.state);
   const [noMatch, setNoMatch] = useState(false);
   const [match, setMatch] = useState(false);
   const [matchedMovie, setMatchedMovie] = useState({});
   const [SwipingCompleted, setSwipingCompleted] = useState(false);
 
-  const topTenMovies = props.location.state.topTenMovies;
+  const movieList = props.location.state.topTenMovies;
   const roomId = props.location.state.roomId;
   const isHost = props.location.state.isHost;
   const name = props.location.state.name;
 
   const [index, setIndex]  = useState(0);
-  const [title, setTitle] = useState(topTenMovies[index].title);
-  const [imageURL, setImageUrl] = useState(topTenMovies[index].image);
-  const [year, setYear] = useState(topTenMovies[index].released);
-  const [lengthOfMovie, setLengthOfMovie] = useState(topTenMovies[index].duration);
-  const [rating, setRating] = useState(topTenMovies[index].rating);
-  const [mediaType, setmediaType] = useState(topTenMovies[index].type);
-  const [description, setDescription] = useState(topTenMovies[index].synopsis);
+  const [title, setTitle] = useState(movieList[index].title);
+  const [imageURL, setImageUrl] = useState(movieList[index].image);
+  const [year, setYear] = useState(movieList[index].released);
+  const [lengthOfMovie, setLengthOfMovie] = useState(movieList[index].duration);
+  const [rating, setRating] = useState(movieList[index].rating);
+  const [mediaType, setmediaType] = useState(movieList[index].type);
+  const [description, setDescription] = useState(movieList[index].synopsis);
 
   const iterateMovie = (index) => {
-    if(index !== (topTenMovies.length - 1)) {
+    if(index !== (movieList.length - 1)) {
       setIndex(index + 1);
     } else {
       setSwipingCompleted(true)
@@ -42,13 +43,13 @@ const SwipingContainer = (props) => {
   };
 
   useEffect(() => {
-    setTitle(topTenMovies[index].title);
-    setImageUrl(topTenMovies[index].image);
-    setYear(topTenMovies[index].released);
-    setLengthOfMovie(topTenMovies[index].runtime);
-    setRating(topTenMovies[index].rating);
-    setmediaType(topTenMovies[index].type);
-    setDescription(topTenMovies[index].synopsis);
+    setTitle(movieList[index].title);
+    setImageUrl(movieList[index].image);
+    setYear(movieList[index].released);
+    setLengthOfMovie(movieList[index].runtime);
+    setRating(movieList[index].rating);
+    setmediaType(movieList[index].type);
+    setDescription(movieList[index].synopsis);
   });
   
   const onClickDislike = () => {
@@ -57,8 +58,8 @@ const SwipingContainer = (props) => {
   };
 
   const onClickLike = () => {
-    const movieId = topTenMovies[index].netflixid;
-    socket.emit('like_event', {roomId: roomId, movieId: movieId, movieData: topTenMovies[index]});
+    const movieId = movieList[index].netflixid;
+    socket.emit('like_event', {roomId: roomId, movieId: movieId, movieData: movieList[index]});
     iterateMovie(index);
   }
 

@@ -37,7 +37,6 @@ io.on('connection', (socket) => {
         socket.join(user.room);
         try {
             const genreIds = await getGenreIds(); 
-            console.log(genreIds);
             io.to(user.room).emit('roomCreation', { room: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), genreIds: genreIds});
         } catch (error) {
             console.log(error)
@@ -65,38 +64,20 @@ io.on('connection', (socket) => {
     socket.on('begin', async (user, filters, callback) => {
         console.log('begin session signal received')
         try {
-            const movieList = await getFiltered(filters.genre, filters.minIrate, filters.maxIrate, filters.minNrate, filters.maxNrate);
+            const movieList = await getFiltered(filters.genreId, filters.minIrate, filters.maxIrate, filters.minNrate, filters.maxNrate);
             io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), movieList: movieList});
         } catch (error) {
             console.log(`error getting filtered list of movies from rapidapi: ${error}`)
             callback(error);
         }
 
-        // getFiltered('horror', 6, 10, 3, 5).then((movielist) => {
-        //     io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: movielist});
-
-        // }).catch((error) => {
-        //     console.log(`error getting filtered list of movies from rapidapi: ${error}`)
-        //     callback(error);
-
-        // })
-        
-
-        // // get list of top 10 movies to send to all guests of the room
-        // console.log('getting top 10')
-        // getTop10().then((top10) => {
-        //     io.to(user.room).emit('sessionMembers', { roomId: user.room, users: getUsersInRoom(user.room), host: getHost(user.room), top10: top10});
-        // }).catch((error) => {
-        //     console.log(`error getting list of top 10 movies from rapidapi: ${error}`)
-        //     callback(error);
-        // });
         callback();
     });
 
      // received signal to start a session from the host of a room, emit redirect signal to all guests and host
      socket.on('initialize_room', ({roomId, numGuests, movies}) => {
         initializeRoom(roomId, numGuests, movies).then((result) => {
-            console.log(result);
+            console.log('initialize room result: ' + result);
         }).catch((error) => {
             console.log(`on initializing room, there was an error in redis: ${error}`);
         });

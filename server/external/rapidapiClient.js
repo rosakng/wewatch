@@ -121,8 +121,6 @@ const getGenreIds = async () => {
     try {
         const data = await makeQuery(requestUrl, options);
         const items = data.ITEMS;
-        console.log(items);
-
         let genreIds = {};
 
         // all
@@ -164,8 +162,6 @@ const getGenreIds = async () => {
         // thriller
         genreIds.thriller = items[genreIndex.thriller]['All Thrillers'];
 
-        console.log(genreIds);
-
         return genreIds;
 
     } catch (error) {
@@ -174,13 +170,22 @@ const getGenreIds = async () => {
     }
 }
 
+/**
+ * 
+ * @param {Number} genreId note: this is a specific numeric ID that must be returned from the frontend. 
+ * @param {Number} minIrate minimum imdb rating (recommended to be 0)
+ * @param {Number} maxIrate maximum imdb rating (recommended to be 10)
+ * @param {Number} minNrate minimum netflix rating (recommended to be 0)
+ * @param {Number} maxNrate maximum netflix rating (recommended to be 5)
+ * @returns list of movies corresponding with filter requirements
+ */
 const getFiltered = async (genreId, minIrate, maxIrate, minNrate, maxNrate) => {
     try {
         let options = {
             method: 'GET',
             url: 'https://rapidapi.p.rapidapi.com/aaapi.cgi',
             params: {
-            q: `-!1900,2020-!${minNrate},${maxNrate}-!${minIrate},${maxIrate}-!${genreId}-!Movie-!Any-!Any-!gt10000-!{downloadable}`,
+            q: `get:new1000-!1900,2020-!${minNrate},${maxNrate}-!${minIrate},${maxIrate}-!${genreId}-!Any-!Any-!Any-!gt100-!`,
             t: 'ns',
             cl: '33',
             st: 'adv',

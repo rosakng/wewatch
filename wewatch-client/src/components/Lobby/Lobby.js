@@ -5,7 +5,6 @@ import { Redirect } from "react-router-dom";
 import './Lobby.css';
 import Layout from 'views/layout';
 import socket from 'Socket'
-import { Input } from "@material-ui/core";
 
 const Lobby = ({location}) => {
     const [name, setName] = useState('');
@@ -17,11 +16,11 @@ const Lobby = ({location}) => {
 
     // filters
     const [genreIds, setGenreIds] = useState(null);
-    const [genre, setGenre] = useState('');
-    const [minIrate, setMinIrate] = useState();
-    const [maxIrate, setMaxIrate] = useState();
-    const [minNrate, setMinNrate] = useState();
-    const [maxNrate, setMaxNrate] = useState();
+    const [genre, setGenre] = useState('all');
+    const [minIrate, setMinIrate] = useState(0);
+    const [maxIrate, setMaxIrate] = useState(10);
+    const [minNrate, setMinNrate] = useState(0);
+    const [maxNrate, setMaxNrate] = useState(5);
 
     const createGenreDropdown = () => {
         let genres = [];
@@ -34,16 +33,11 @@ const Lobby = ({location}) => {
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
         console.log(users[0])
-        console.log(genre)
-        console.log(genreIds)
-        console.log(genreIds.genre)
-        const filters = {genre: genre, genreId: genreIds.genre[0], minIrate:minIrate, maxIrate:maxIrate,  minNrate:minNrate, maxNrate:maxNrate};
+        const filters = {genre: genre, genreId: genreIds[genre][0], minIrate:minIrate, maxIrate:maxIrate,  minNrate:minNrate, maxNrate:maxNrate};
         socket.emit('begin', users[0], filters, (error) => {
-            console.log('inside')
             if (error) {
                 alert(error);
             }
-            console.log('starting');
         })
     }
 
@@ -95,6 +89,7 @@ const Lobby = ({location}) => {
         return () => {socket.off('roomData')};
     }, []);
 
+
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
         socket.on('sessionMembers', ({roomId, users, host, movieList}) => {
@@ -104,6 +99,7 @@ const Lobby = ({location}) => {
         });
         return () => {socket.off('sessionMembers')};
     }, []);
+
 
     return (
         <Layout>
@@ -141,13 +137,12 @@ const Lobby = ({location}) => {
                                 }}
                                 /> : null }
                 </div>
-                { name === hostName && genreIds!=null?
+                { name === hostName && genreIds !== null?
                     <div className="container">
                     <h1>Filter by:</h1>
-                    
                     <label>
                         Genre:
-                        <select  onChange={(event) => {
+                        <select value={genre} onChange={(event) => {
                             console.log(event);
                             setGenre(event.target.value)
                             console.log(event.target.value)
@@ -160,7 +155,7 @@ const Lobby = ({location}) => {
                     <div>
                         <label>
                             Minimum IMDB rating (out of 10)
-                            <input placeholder="5" type="text" onChange={(event) => setMinIrate(event.target.value)} />
+                            <input placeholder="0" type="text" onChange={(event) => setMinIrate(event.target.value)} />
                         </label>
                         
                     </div>
@@ -174,7 +169,7 @@ const Lobby = ({location}) => {
                     <div>
                         <label>
                             Minimum Netflix rating (out of 5)
-                            <input placeholder="2" type="text" onChange={(event) => setMinNrate(event.target.value)} />
+                            <input placeholder="0" type="text" onChange={(event) => setMinNrate(event.target.value)} />
                         </label>
                     </div>
                     <div>
@@ -183,12 +178,6 @@ const Lobby = ({location}) => {
                             <input placeholder="5" type="text" onChange={(event) => setMaxNrate(event.target.value)} />
                         </label>
                     </div>
-                    {// TODO 
-                    // ADD DROPDOWN FOR GENRE SELECTION x
-                    // ADD 2 TEXT INPUTS FOR MIN AND MAX IMDB RATING
-                    // ADD 2 TEXT INPUTS FOR MIN AND MAX NETFLIX RATING
-                    }
-
                     </div> : null
                 }
                 
