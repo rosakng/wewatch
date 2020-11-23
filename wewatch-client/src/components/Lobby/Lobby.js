@@ -147,20 +147,17 @@ const Lobby = ({location}) => {
                             {createGenreDropdown()}
                         </select>
                     </label>
-                    
                     <div>
                         <label>
                             Minimum IMDB rating (out of 10)
                             <input placeholder="0" type="text" onChange={(event) => setMinIrate(event.target.value)} />
                         </label>
-                        
                     </div>
                     <div>
                         <label>
                             Maximum IMDB rating (out of 10)
                             <input placeholder="10" type="text" onChange={(event) => setMaxIrate(event.target.value)} />
                         </label>
-                        
                     </div>
                     <div>
                         <label>
