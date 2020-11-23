@@ -57,7 +57,6 @@ const Lobby = ({location}) => {
                 setUsers(users)
                 setHostName(host)
                 setGenreIds(genreIds);
-                console.log(genreIds);
 
                 if (reset){
                     socket.emit('tryAgainUser', {oldRoomId: oldRoomId, newRoomId: room});
@@ -125,17 +124,19 @@ const Lobby = ({location}) => {
                         :
                         <h2>Waiting for Host to start!</h2> 
                     }
-                    { goSwipe && movieList!=null ? <Redirect to={{ 
-                                    pathname: '/swiping',
-                                    search:`?room=${roomId}`,
-                                    state: {
-                                        isHost: name == hostName,
-                                        name: name,
-                                        roomId: roomId,
-                                        topTenMovies: movieList,
-                                    }
-                                }}
-                                /> : null }
+                    { goSwipe && movieList!=null ?
+                        <Redirect to={{ 
+                            pathname: '/swiping',
+                            search:`?room=${roomId}`,
+                            state: {
+                                isHost: name == hostName,
+                                name: name,
+                                roomId: roomId,
+                                movieList: movieList,
+                            }}}
+                        />
+                        : null
+                    }
                 </div>
                 { name === hostName && genreIds !== null?
                     <div className="container">

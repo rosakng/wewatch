@@ -20,7 +20,7 @@ const SwipingContainer = (props) => {
   const [matchedMovie, setMatchedMovie] = useState({});
   const [SwipingCompleted, setSwipingCompleted] = useState(false);
 
-  const movieList = props.location.state.topTenMovies;
+  const movieList = props.location.state.movieList;
   const roomId = props.location.state.roomId;
   const isHost = props.location.state.isHost;
   const name = props.location.state.name;
@@ -125,7 +125,7 @@ const SwipingContainer = (props) => {
                               }}/> : null }
           <Row>
             <Col>
-            {props.location.state.topTenMovies && (
+            {props.location.state.movieList && (
               <StyledDiv flex alignItems="center" marginTop={2}>
                 <CloseIcon
                   style={{ color: theme.colors.red, fontSize: '60px'}}
