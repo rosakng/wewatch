@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import { Container, Row, Col } from 'reactstrap';
@@ -33,6 +33,10 @@ const SwipingContainer = (props) => {
   const [mediaType, setmediaType] = useState(movieList[index].type);
   const [description, setDescription] = useState(movieList[index].synopsis);
 
+  const [endSessionUser, setEndSessionUser] = useState(false);
+  const [endSessionHost, setEndSessionHost] = useState(false);
+  const [newRoomId, setNewRoomId] = useState('');
+
   const iterateMovie = (index) => {
     if(index !== (movieList.length - 1)) {
       setIndex(index + 1);
@@ -50,7 +54,7 @@ const SwipingContainer = (props) => {
     setmediaType(movieList[index].type);
     setDescription(movieList[index].synopsis);
   });
-  
+
   const onClickDislike = () => {
     socket.emit('dislike_event', {roomId: roomId});
     iterateMovie(index);
@@ -65,24 +69,45 @@ const SwipingContainer = (props) => {
   //listen to the no match event
   useEffect(() => {
     socket.on('noMatchRedirect', () => {
-        setNoMatch(true);
-   });
-
-   return () => { socket.off('noMatchRedirect')};
+      setNoMatch(true);
+    });
+    return () => { socket.off('noMatchRedirect') };
   });
 
   useEffect(() => {
-      //listen to match event
-      socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
-        setMatchedMovie(matchedMovieData);
-        setMatch(true);
-      });
-  
-      return () => { socket.off('matchRedirect')};
+    //listen to match event
+    socket.on('matchRedirect', ({ matchedMovieId, matchedMovieData }) => {
+      setMatchedMovie(matchedMovieData);
+      setMatch(true);
+    });
+
+    return () => { socket.off('matchRedirect') };
   })
 
-  function SwipingCompletedScreen () {
-    return(
+  const endSessionEmit = () => {
+    socket.emit('try_again_event', { roomId: roomId })
+  }
+
+  useEffect(() => {
+    socket.on('tryAgainRedirectHost', () => {
+      if (isHost) {
+        setEndSessionHost(true);
+      }
+    })
+    return () => { socket.off('tryAgainRedirectHost') };
+  });
+
+  useEffect(() => {
+    socket.on('tryAgainRedirectUser', ({ newRoomId }) => {
+      setNewRoomId(newRoomId);
+      setEndSessionUser(true);
+    });
+    return () => { socket.off('tryAgainRedirectUser') };
+  })
+
+
+  function SwipingCompletedScreen() {
+    return (
       <Layout>
         <Container>{ match && matchedMovie != null ? <Redirect to={{ 
       pathname: '/match',
@@ -96,14 +121,16 @@ const SwipingContainer = (props) => {
       }}/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1>
         </Container>
       </Layout>
-      
+
     )
   }
 
-  if (!SwipingCompleted){
-  return (
-    <Layout>
-      <StyledDiv flex paddingLeft={4} marginTop={3}>
+  if (!SwipingCompleted) {
+    return (
+      <Layout>
+        { endSessionHost ? <Redirect to={`/lobby?name=${name}&reset=${true}&oldRoomId=${roomId}`}/> : null}
+        { endSessionUser ? <Redirect to={`/lobby?name=${name}&room=${newRoomId}`}/> : null}
+        <StyledDiv flex paddingLeft={4} marginTop={3}>
           <StyledDiv>Start Swiping!</StyledDiv>
           <Tooltip
             text={`Click the happy face if you would like to watch the movie, or click the X otherwise!`}
@@ -111,59 +138,68 @@ const SwipingContainer = (props) => {
             <ToolTipIcon fill={theme.colors.gray[2]} size="25px" />
           </Tooltip>
         </StyledDiv>
-      <Container>
-      { match && matchedMovie != null ?
-            <Redirect to={{ 
+        <Container>
+          {match && matchedMovie != null ?
+            <Redirect to={{
               pathname: '/match',
               state: {
                 matchedMovie: matchedMovie,
                 isHost: isHost,
                 roomId: roomId,
                 name: name
-                }
-              }}/>
-            : null }
-          { noMatch ?
+              }
+            }} />
+            : null}
+          {noMatch ?
             <Redirect to={{
               pathname: '/noMatch',
               state: {
                 isHost: isHost,
                 roomId: roomId,
-                name: name}
-            }}/> : null }
+                name: name
+              }
+            }} /> : null}
           <Row>
             <Col>
-            {props.location.state.movieList && (
-              <StyledDiv flex alignItems="center" marginTop={2}>
-                <CloseIcon
-                  style={{ color: theme.colors.red, fontSize: '60px'}}
-                  onClick={onClickDislike}
-                />
-                <StyledDiv padding={2}>
-                  <MovieDetail
-                    title={title}
-                    year={year}
-                    lengthOfMovie={lengthOfMovie}
-                    rating={rating}
-                    mediaType={mediaType}
-                    imageURL={imageURL}
-                    description={description}
+              {props.location.state.movieList && (
+                <StyledDiv flex alignItems="center" marginTop={2}>
+                  <CloseIcon
+                    style={{ color: theme.colors.red, fontSize: '60px' }}
+                    onClick={onClickDislike}
+                  />
+                  <StyledDiv padding={2}>
+                    <MovieDetail
+                      title={title}
+                      year={year}
+                      lengthOfMovie={lengthOfMovie}
+                      rating={rating}
+                      mediaType={mediaType}
+                      imageURL={imageURL}
+                      description={description}
+                    />
+                    <StyledDiv>
+                      { isHost ?
+                      <button className={'button mt-20'} type="button" onClick={endSessionEmit}>End Session</button>
+                      : null
+                      }
+                    </StyledDiv>
+
+                  </StyledDiv>
+                  <InsertEmoticonIcon
+                    style={{ color: theme.colors.green, fontSize: '60px' }}
+                    fontSize="large"
+                    onClick={onClickLike}
                   />
                 </StyledDiv>
-                <InsertEmoticonIcon
-                  style={{ color: theme.colors.green, fontSize: '60px'}}
-                  fontSize="large"
-                  onClick={onClickLike}
-                />
-              </StyledDiv>
-            )}
+              )}
             </Col>
           </Row>
         </Container>
-    </Layout>
-  );}
+      </Layout>
+    );
+  }
   else if (SwipingCompleted) {
-    return(<SwipingCompletedScreen/>)
+    return (<SwipingCompletedScreen />)
   }
 };
 
