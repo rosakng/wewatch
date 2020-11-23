@@ -143,12 +143,7 @@ const Lobby = ({location}) => {
                     <h1>Filter by:</h1>
                     <label>
                         Genre:
-                        <select value={genre} onChange={(event) => {
-                            console.log(event);
-                            setGenre(event.target.value)
-                            console.log(event.target.value)
-                            console.log(genre)
-                            }}>
+                        <select value={genre} onChange={(event) => {setGenre(event.target.value)}}>
                             {createGenreDropdown()}
                         </select>
                     </label>

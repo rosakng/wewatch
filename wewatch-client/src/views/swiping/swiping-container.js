@@ -13,8 +13,7 @@ import Tooltip from 'views/tooltip';
 import ToolTipIcon from 'views/assets/tooltipIcon';
 import MovieDetail from 'views/swiping/movie-detail.js';
 
-const SwipingContainer = (props) => {  
-  console.log(props.location.state);
+const SwipingContainer = (props) => {
   const [noMatch, setNoMatch] = useState(false);
   const [match, setMatch] = useState(false);
   const [matchedMovie, setMatchedMovie] = useState({});
@@ -113,16 +112,25 @@ const SwipingContainer = (props) => {
           </Tooltip>
         </StyledDiv>
       <Container>
-            { match && matchedMovie != null ? <Redirect to={{ 
-                                pathname: '/match',
-                                state: {matchedMovie: matchedMovie}
-                            }}/>: null }
-    { noMatch ? <Redirect to={{
-                                pathname: '/noMatch',
-                                state: {isHost: isHost,
-                                        roomId: roomId,
-                                        name: name}
-                              }}/> : null }
+      { match && matchedMovie != null ?
+            <Redirect to={{ 
+              pathname: '/match',
+              state: {
+                matchedMovie: matchedMovie,
+                isHost: isHost,
+                roomId: roomId,
+                name: name
+                }
+              }}/>
+            : null }
+          { noMatch ?
+            <Redirect to={{
+              pathname: '/noMatch',
+              state: {
+                isHost: isHost,
+                roomId: roomId,
+                name: name}
+            }}/> : null }
           <Row>
             <Col>
             {props.location.state.movieList && (
