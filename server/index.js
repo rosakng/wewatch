@@ -15,7 +15,7 @@ const io = socketio(server);
 app.use(router);
 app.use(cors());
 
-const { addUser, addHost, removeUser, getUsersInRoom, getHost } = require('./users');
+const { addUser, addHost, removeUser, getUsersInRoom, getHost, getRooms } = require('./users');
 const { getTop10, getFiltered, getGenreIds } = require('./external/rapidapiClient');
 const { initializeRoom, likeEvent, dislikeEvent, purgeRoom } = require('./redis.repository');
 
@@ -131,6 +131,8 @@ io.on('connection', (socket) => {
         })
     })
 });
+
+app.get('/getRoom', (req, res) => res.send(getRooms()))
 
 server.listen(PORT, () => {
     console.log('Server running on ' + PORT);
