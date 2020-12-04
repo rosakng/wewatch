@@ -1,4 +1,3 @@
-const { hostname } = require("os");
 const redis = require("redis");
 const { promisify } = require("util");
 const client = redis.createClient();
