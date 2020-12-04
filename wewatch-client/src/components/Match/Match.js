@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
-import MovieDetail from 'views/swiping/movie-detail.js';
+import MatchMovieDetail from './match-movie-detail.js';
 import { Container, Row, Col } from 'reactstrap';
 import StyledDiv from 'styles/styled-div';
 import './Match.css';
@@ -27,18 +27,18 @@ const Match = (props) => {
         socket.on('tryAgainRedirectHost', () => {
             if (isHost) {
                 setTryAgainHost(true);
-            } 
-       })
-       return () => { socket.off('tryAgainRedirectHost')};
+            }
+        })
+        return () => { socket.off('tryAgainRedirectHost')};
     });
 
     //listen to try again event for users
-    useEffect(() => { 
-    socket.on('tryAgainRedirectUser', ({newRoomId}) => {
-        setNewRoomId(newRoomId)
-        setTryAgain(true);
-    });
-    return () => { socket.off('tryAgainRedirectUser')};
+    useEffect(() => {
+        socket.on('tryAgainRedirectUser', ({newRoomId}) => {
+            setNewRoomId(newRoomId)
+            setTryAgain(true);
+        });
+        return () => { socket.off('tryAgainRedirectUser')};
     })
 
     return (
@@ -46,29 +46,29 @@ const Match = (props) => {
             <Container>
                 <Col>
                     <Row>
-                        <div class='center'>
-                        { tryAgainHost ? <Redirect to={`/lobby?name=${name}&reset=${true}&oldRoomId=${roomId}`}/> : null}
-                        { tryAgain ? <Redirect to={`/lobby?name=${name}&room=${newRoomId}`}/> : null}
-                        <h1>It's a match!</h1>
-                        <span>Everyone wants to watch:</span>
+                        <div class="text-container center">
+                            { tryAgainHost ? <Redirect to={`/lobby?name=${name}&reset=${true}&oldRoomId=${roomId}`}/> : null}
+                            { tryAgain ? <Redirect to={`/lobby?name=${name}&room=${newRoomId}`}/> : null}
+                            <h1>It's a match!</h1>
+                            <span>Everyone wants to watch:</span>
                         </div>
-                        </Row>
-                        <Row>
+                    </Row>
+                    <Row>
                         <StyledDiv alignItems="center" flexDirection="column">
                             <StyledDiv padding={2}>
-                                <MovieDetail
-                                title={movieData.title}
-                                year={movieData.released}
-                                lengthOfMovie={movieData.runtime}
-                                rating={movieData.rating}
-                                mediaType={movieData.type}
-                                imageURL={movieData.image}
-                                description={movieData.synopsis}
+                                <MatchMovieDetail
+                                    title={movieData.title}
+                                    year={movieData.released}
+                                    lengthOfMovie={movieData.runtime}
+                                    rating={movieData.rating}
+                                    mediaType={movieData.type}
+                                    imageURL={movieData.image}
+                                    description={movieData.synopsis}
                                 />
                             </StyledDiv>
-                            { isHost ? 
-                                <StyledDiv height="50%" marginHorizontal={7}>
-                                <button className={'button mt-20'} type="button" onClick={tryAgainEmit}>Try Again</button>
+                            {isHost ?
+                                <StyledDiv height="100px" marginHorizontal={7}>
+                                    <button className={'button mt-20'} type="button" onClick={tryAgainEmit}>Try Again</button>
                                 </StyledDiv>
                                 : null
                             }
