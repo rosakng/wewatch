@@ -13,9 +13,9 @@ const Join = ({location}) => {
   const [validRoom, setValidRoom] = useState(false);
 
   const checkRoom = () => {
-    axios.get('http://localhost:5000/getRoom').then(response => {
-      var rooms = response.data
-      var isValidRoom = rooms[room]
+    axios.get('http://localhost:5000/rooms').then(response => {
+      let rooms = response.data
+      let isValidRoom = rooms[room]
 
       if (isValidRoom) {
         setValidRoom(true)

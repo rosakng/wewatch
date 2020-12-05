@@ -132,7 +132,7 @@ io.on('connection', (socket) => {
     })
 });
 
-app.get('/getRoom', (req, res) => res.send(getRooms()))
+app.get('/rooms', (req, res) => res.send(getRooms()))
 
 server.listen(PORT, () => {
     console.log('Server running on ' + PORT);
