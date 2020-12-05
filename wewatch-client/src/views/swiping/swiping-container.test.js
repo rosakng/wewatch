@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
 import SwipingContainer from './swiping-container';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
@@ -12,6 +11,8 @@ Enzyme.configure({ adapter: new Adapter() });
 
 const location= {
   state: {
+    isHost: true,
+    name: 'swiper',
     roomId: 'roomId',
     topTenMovies: test_movie_data,
   }

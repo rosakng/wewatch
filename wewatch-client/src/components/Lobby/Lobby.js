@@ -12,17 +12,32 @@ const Lobby = ({location}) => {
     const [roomId, setRoomId] = useState('');
     const [users, setUsers] = useState([]);
     const [goSwipe, setGoSwipe] = useState(false);
-    const [topTenMovies, setTopTenMovies] = useState(null);
+    const [movieList, setMovieList] = useState(null);
+
+    // filters
+    const [genreIds, setGenreIds] = useState(null);
+    const [genre, setGenre] = useState('all');
+    const [minIrate, setMinIrate] = useState(0);
+    const [maxIrate, setMaxIrate] = useState(10);
+    const [minNrate, setMinNrate] = useState(0);
+    const [maxNrate, setMaxNrate] = useState(5);
+
+    const createGenreDropdown = () => {
+        let genres = [];
+        for (const key in genreIds){
+            genres.push(<option value={key}>{key}</option>)
+        }
+        return genres;
+    }
 
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
         console.log(users[0])
-        socket.emit('begin', users[0], (error) => {
-            console.log('inside')
+        const filters = {genre: genre, genreId: genreIds[genre][0], minIrate:minIrate, maxIrate:maxIrate,  minNrate:minNrate, maxNrate:maxNrate};
+        socket.emit('begin', users[0], filters, (error) => {
             if (error) {
                 alert(error);
             }
-            console.log('starting');
         })
     }
 
@@ -37,10 +52,11 @@ const Lobby = ({location}) => {
                 }
             });
         
-            socket.on('roomCreation', ({ room , users, host}) => {
+            socket.on('roomCreation', ({ room , users, host, genreIds }) => {
                 setRoomId(room)
                 setUsers(users)
                 setHostName(host)
+                setGenreIds(genreIds);
 
                 if (reset){
                     socket.emit('tryAgainUser', {oldRoomId: oldRoomId, newRoomId: room});
@@ -72,15 +88,17 @@ const Lobby = ({location}) => {
         return () => {socket.off('roomData')};
     }, []);
 
+
     useEffect(() => {
         // set boolean for redirecting to swipe screen to be true, renders redirect component
-        socket.on('sessionMembers', ({roomId, users, host, top10}) => {
+        socket.on('sessionMembers', ({roomId, users, host, movieList}) => {
             setGoSwipe(true);
-            setTopTenMovies(top10);
-            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: top10});
+            setMovieList(movieList);
+            socket.emit('initialize_room', {roomId: roomId, numGuests: users.length, movies: movieList});
         });
         return () => {socket.off('sessionMembers')};
     }, []);
+
 
     return (
         <Layout>
@@ -106,18 +124,56 @@ const Lobby = ({location}) => {
                         :
                         <h2>Waiting for Host to start!</h2> 
                     }
-                    { goSwipe && topTenMovies!=null ? <Redirect to={{ 
-                                    pathname: '/swiping',
-                                    search:`?room=${roomId}`,
-                                    state: {
-                                        isHost: name == hostName,
-                                        name: name,
-                                        roomId: roomId,
-                                        topTenMovies: topTenMovies,
-                                    }
-                                }}
-                                /> : null }
+                    { goSwipe && movieList!=null ?
+                        <Redirect to={{ 
+                            pathname: '/swiping',
+                            search:`?room=${roomId}`,
+                            state: {
+                                isHost: name == hostName,
+                                name: name,
+                                roomId: roomId,
+                                movieList: movieList,
+                            }}}
+                        />
+                        : null
+                    }
                 </div>
+                { name === hostName && genreIds !== null?
+                    <div className="container">
+                    <h1>Filter by:</h1>
+                    <label>
+                        Genre:
+                        <select value={genre} onChange={(event) => {setGenre(event.target.value)}}>
+                            {createGenreDropdown()}
+                        </select>
+                    </label>
+                    <div>
+                        <label>
+                            Minimum IMDB rating (out of 10)
+                            <input placeholder="0" type="text" onChange={(event) => setMinIrate(event.target.value)} />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Maximum IMDB rating (out of 10)
+                            <input placeholder="10" type="text" onChange={(event) => setMaxIrate(event.target.value)} />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Minimum Netflix rating (out of 5)
+                            <input placeholder="0" type="text" onChange={(event) => setMinNrate(event.target.value)} />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Maximum Netflix rating (out of 5)
+                            <input placeholder="5" type="text" onChange={(event) => setMaxNrate(event.target.value)} />
+                        </label>
+                    </div>
+                    </div> : null
+                }
+                
             </div>            
         </Layout>
 
