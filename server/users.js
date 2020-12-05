@@ -50,4 +50,6 @@ const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 
 const getHost = (roomId) => rooms[roomId];
 
-module.exports = { addUser, addHost, removeUser, getUsersInRoom, getHost};
+const getRooms = () => rooms;
+
+module.exports = { addUser, addHost, removeUser, getUsersInRoom, getHost, getRooms};
