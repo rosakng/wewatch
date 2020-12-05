@@ -99,7 +99,6 @@ const Lobby = ({location}) => {
         return () => {socket.off('sessionMembers')};
     }, []);
 
-
     return (
         <Layout>
             <div className="outerContainer">

@@ -19,6 +19,11 @@ const SwipingContainer = (props) => {
   const [matchedMovie, setMatchedMovie] = useState({});
   const [SwipingCompleted, setSwipingCompleted] = useState(false);
 
+  if (props.location.state.movieList.length==0) {
+    props.history.push('/error');
+    props.history.go();
+  }
+
   const movieList = props.location.state.movieList;
   const roomId = props.location.state.roomId;
   const isHost = props.location.state.isHost;
