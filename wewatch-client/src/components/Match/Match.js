@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
-import MatchMovieDetail from './match-movie-detail.js';
+import MatchMovieDetail from 'views/swiping//match-movie-detail.js';
 import { Container, Row, Col } from 'reactstrap';
 import StyledDiv from 'styles/styled-div';
 import './Match.css';

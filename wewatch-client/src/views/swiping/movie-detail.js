@@ -30,7 +30,7 @@ const DetailText = styled.span`
   font-size: ${theme.font.size[3]};
   margin-top: ${theme.space[3]};
   margin-right: ${theme.space[3]};
-  margin-bottom: ${theme.space[3]};  `;
+  margin-bottom: ${theme.space[3]};`;
 
 const BoldText = styled.span`
   font-size: ${theme.font.size[3]};
