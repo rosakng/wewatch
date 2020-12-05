@@ -19,6 +19,7 @@ export default {
     ],
     green: '#58c659',
     red: '#e70012',
+    yellow: '#feca57',
   },
 
   font: {

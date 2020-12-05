@@ -7,6 +7,7 @@ import Lobby from 'components/Lobby/Lobby';
 import Swiping from 'views/swiping/swiping-container';
 import Match from 'components/Match/Match';
 import noMatch from 'components/noMatch/noMatch';
+import PageErrorIndicator from 'views/error-handling/page-error';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -20,6 +21,7 @@ const App = () => {
       <Route path="/swiping" component={Swiping}/>
       <Route path="/match" component={Match}/>
       <Route path="/noMatch" component={noMatch}/>
+      <Route path="/error" component={PageErrorIndicator}/>
     </Router>
   );
 }
