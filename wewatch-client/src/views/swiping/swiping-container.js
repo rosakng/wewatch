@@ -94,73 +94,94 @@ const SwipingContainer = (props) => {
     socket.on('noMatchRedirect', () => {
         setNoMatch(true);
    });
-
-  //listen to match event
-    socket.on('matchRedirect', ({matchedMovieId, matchedMovieData}) => {
-      console.log(matchedMovieId);
-      console.log(matchedMovieData);
-      setMatchedMovie(matchedMovieData);
-      setMatch(true);
-    });
+   return () => { socket.off('noMatchRedirect')};
   });
 
   function SwipingCompletedScreen () {
-    return(<Container>{ match && matchedMovie != null ? <Redirect to={{ 
-      pathname: '/match',
-      state: {matchedMovie: matchedMovie}
-      }}/>: null }
-      { noMatch ? <Redirect to='/noMatch'/> : null }<h1 style={{'text-align': "center", 'margin-top': '60px'}}>You've seen all potential movies for recommendation, please wait as your the others finish swiping!</h1></Container>)
+    return(
+      <Layout>
+        <Container>{ match && matchedMovie != null ? <Redirect to={{ 
+          pathname: '/match',
+          state: {matchedMovie: matchedMovie}
+          }}/>: null }
+          { noMatch ? 
+            <Redirect to={{
+              pathname: '/noMatch',
+              state: {isHost: isHost,
+                      roomId: roomId,
+                      name: name}
+              }}/>
+            : null }
+          <h1 style={{'text-align': "center", 'margin-top': '60px'}}>
+            You've seen all potential movies for recommendation, please wait as your the others finish swiping!
+          </h1>
+        </Container>
+      </Layout>
+      
+    )
   }
 
   if (!SwipingCompleted){
   return (
-  <Container>
-    { match && matchedMovie != null ? <Redirect to={{ 
-                                pathname: '/match',
-                                state: {matchedMovie: matchedMovie}
-                            }}/>: null }
-    { noMatch ? <Redirect to='/noMatch'/> : null }
-    <Row>
-      <Col>
-      {props.location.state.topTenMovies && (
-        <StyledDiv flex alignItems="center" marginTop={2}>
-          <CloseIcon
-            style={{ color: theme.colors.red, fontSize: '60px'}}
-            onClick={onClickDislike}
-          />
-          <StyledDiv padding={2}>
-            <MovieDetail
-              title={title}
-              year={year}
-              lengthOfMovie={lengthOfMovie}
-              rating={rating}
-              mediaType={mediaType}
-              imageURL={imageURL}
-              description={description}
-            />
-            <StyledDiv>
-            <div className="buttonContainer">
-                {isHost ? <button className={'button mt-20'} type="button" onClick={tryAgainEmit}>End Session</button> : null}
-            </div>
-            </StyledDiv>
-          </StyledDiv>
-
-          <InsertEmoticonIcon
-            style={{ color: theme.colors.green, fontSize: '60px'}}
-            fontSize="large"
-            onClick={onClickLike}
-          />
+    <Layout>
+      <StyledDiv flex paddingLeft={4} marginTop={3}>
+          <StyledDiv>Start Swiping!</StyledDiv>
+          <Tooltip
+            text={`Click the happy face if you would like to watch the movie, or click the X otherwise!`}
+          >
+            <ToolTipIcon fill={theme.colors.gray[2]} size="25px" />
+          </Tooltip>
         </StyledDiv>
-      )}
-      </Col>
-    </Row>
-    {/* {name === hostName 
-        ? 
-        <button className={'button mt-20'} type="button" onClick={}>End Session</button> 
-        :
-        <h2>only the host may end the session</h2> 
-    } */}
-  </Container>
+      <Container>
+          { match && matchedMovie != null ?
+            <Redirect to={{ 
+              pathname: '/match',
+              state: {
+                matchedMovie: matchedMovie,
+                isHost: isHost,
+                roomId: roomId,
+                name: name
+                }
+              }}/>
+            : null }
+          { noMatch ?
+            <Redirect to={{
+              pathname: '/noMatch',
+              state: {
+                isHost: isHost,
+                roomId: roomId,
+                name: name}
+            }}/> : null }
+          <Row>
+            <Col>
+            {props.location.state.topTenMovies && (
+              <StyledDiv flex alignItems="center" marginTop={2}>
+                <CloseIcon
+                  style={{ color: theme.colors.red, fontSize: '60px'}}
+                  onClick={onClickDislike}
+                />
+                <StyledDiv padding={2}>
+                  <MovieDetail
+                    title={title}
+                    year={year}
+                    lengthOfMovie={lengthOfMovie}
+                    rating={rating}
+                    mediaType={mediaType}
+                    imageURL={imageURL}
+                    description={description}
+                  />
+                </StyledDiv>
+                <InsertEmoticonIcon
+                  style={{ color: theme.colors.green, fontSize: '60px'}}
+                  fontSize="large"
+                  onClick={onClickLike}
+                />
+              </StyledDiv>
+            )}
+            </Col>
+          </Row>
+        </Container>
+    </Layout>
   );}
   else if (SwipingCompleted) {
     return(<SwipingCompletedScreen/>)

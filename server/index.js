@@ -42,8 +42,6 @@ io.on('connection', (socket) => {
 
     });
 
-
-
     // When a user joins a room, add the user to the room and update the room list
     socket.on('join', ({ name, room }, callback) => {
         const { error, user } = addUser({ id: socket.id, name, room });
