@@ -124,17 +124,24 @@ const Lobby = ({location}) => {
                         <h2>Waiting for Host to start!</h2> 
                     }
                     { goSwipe && movieList!=null ?
-                        <Redirect to={{ 
-                            pathname: '/swiping',
-                            search:`?room=${roomId}`,
-                            state: {
-                                isHost: name == hostName,
-                                name: name,
-                                roomId: roomId,
-                                movieList: movieList,
-                            }}}
-                        />
-                        : null
+                        (movieList.length==0 ?
+                            <Redirect to={{
+                                pathname: '/error',
+                                search:`?room=${roomId}`,
+                                }}
+                            /> : 
+                            <Redirect to={{ 
+                                pathname: '/swiping',
+                                search:`?room=${roomId}`,
+                                state: {
+                                    isHost: name == hostName,
+                                    name: name,
+                                    roomId: roomId,
+                                    movieList: movieList,
+                                }}}
+                            />)
+                        :
+                        null
                     }
                 </div>
                 { name === hostName && genreIds !== null?

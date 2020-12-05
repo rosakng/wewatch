@@ -7,18 +7,6 @@ import WarningIcon from '@material-ui/icons/Warning';
 
 import StyledDiv from 'styles/styled-div';
 
-
-/**
- *
- * PageErrorIndicator Usage Example:
- *
- *  <Layout>
- *    <PageErrorIndicator/>
- *  </Layout>
- *
- *
- */
-
 const ErrorLabel = styled.span`
   color: ${theme.colors.gray[5]};
 `;
@@ -31,7 +19,7 @@ const PageErrorIndicator = () => (
         fontSize="large"
       />
     </StyledDiv>
-    <ErrorLabel>{`There were no movies that corresponded to the filters. Please return to the original WeWatch URL.`}</ErrorLabel>
+    <ErrorLabel>{`There were no movies that corresponded to the filters. Please return to WeWatch.`}</ErrorLabel>
   </StyledDiv>
 );
 
