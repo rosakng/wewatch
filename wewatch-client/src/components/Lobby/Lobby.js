@@ -100,11 +100,10 @@ const Lobby = ({location}) => {
         return () => {socket.off('sessionMembers')};
     }, []);
 
-
     return (
         <Layout>
             <div className="outerContainer">
-                <div className="container">
+                <div className= "lobbyContainer">
                     <h1>Welcome to {hostName}'s Lobby</h1>
                     <h2>Lobby ID: {roomId} </h2>
                     <h2>In the lobby:</h2>
@@ -126,21 +125,28 @@ const Lobby = ({location}) => {
                         <h2>Waiting for Host to start!</h2> 
                     }
                     { goSwipe && movieList!=null ?
-                        <Redirect to={{ 
-                            pathname: '/swiping',
-                            search:`?room=${roomId}`,
-                            state: {
-                                isHost: name == hostName,
-                                name: name,
-                                roomId: roomId,
-                                movieList: movieList,
-                            }}}
-                        />
-                        : null
+                        (movieList.length==0 ?
+                            <Redirect to={{
+                                pathname: '/error',
+                                search:`?room=${roomId}`,
+                                }}
+                            /> : 
+                            <Redirect to={{ 
+                                pathname: '/swiping',
+                                search:`?room=${roomId}`,
+                                state: {
+                                    isHost: name == hostName,
+                                    name: name,
+                                    roomId: roomId,
+                                    movieList: movieList,
+                                }}}
+                            />)
+                        :
+                        null
                     }
                 </div>
                 { name === hostName && genreIds !== null?
-                    <div className="container">
+                    <div className="lobbyContainer">
                     <h1>Filter by:</h1>
                     { genre !== 'all' || sliderIrate[0] >= 4 || sliderNrate[0] >= 2 ?
                         <div>

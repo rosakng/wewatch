@@ -4,15 +4,19 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import BrushIcon from '@material-ui/icons/Brush';
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
+import _ from 'underscore';
 
 import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';
 
-const MovieDetailContainer = styled.div`
-  padding: ${theme.space[4]};
+const MatchMovieDetailContainer = styled.div`
+padding: ${theme.space[4]}; 
+  margin: 0 auto  ;
   line-height: 1.0;
   border: 1px ${theme.colors.black} solid;
   border-radius: ${theme.borderRadius};
+  display:flex; 
+  flex-direction:row;
 `;
 const Title = styled.span`
   font-size: ${theme.font.size[4]};
@@ -30,7 +34,7 @@ const DetailText = styled.span`
   font-size: ${theme.font.size[3]};
   margin-top: ${theme.space[3]};
   margin-right: ${theme.space[3]};
-  margin-bottom: ${theme.space[3]};`;
+  margin-bottom: ${theme.space[3]};  `;
 
 const BoldText = styled.span`
   font-size: ${theme.font.size[3]};
@@ -45,16 +49,28 @@ font-size: ${theme.font.size[3]};
 `;
 
 const PhotoContainer = styled.div`
-  margin: ${theme.space[2]};
+  margin: ${theme.space[3]};
 `;
 
 const Image = styled.img`
   box-shadow: 0 0 10px #ccc;
-  width: 100%;
-  height: 50vh;
+  height: 40vh;
 `;
 
-const MovieDetail = ({
+const TextContainer = styled.div`
+  width:50%
+  margin: ${theme.space[3]};
+`;
+
+const unescapeString = (str) => {
+  console.log(str)
+  // str = _.unescape(str)
+  console.log(unescape(str))
+  // return _.unescape(str);
+  return unescape(str)
+}
+
+const MatchMovieDetail = ({
   title,
   rating,
   year,
@@ -63,10 +79,11 @@ const MovieDetail = ({
   imageURL,
   description,
 }) => (
-    <MovieDetailContainer>
+    <MatchMovieDetailContainer>
       <PhotoContainer>
         <Image src={imageURL} />
       </PhotoContainer>
+      <TextContainer>
       <StyledDiv paddingVertical={3}>
         <Title>{title}</Title>
       </StyledDiv>
@@ -100,9 +117,10 @@ const MovieDetail = ({
       </StyledDiv>
       <StyledDiv margin={2} paddingTop={2}>
         <DivBorder />
-        <DescriptionText>{description}</DescriptionText>
+        <DescriptionText>{unescapeString(description)}</DescriptionText>
       </StyledDiv>
-    </MovieDetailContainer>
+      </TextContainer>
+    </MatchMovieDetailContainer>
   );
 
-export default MovieDetail;
+export default MatchMovieDetail;
