@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import { Redirect } from "react-router-dom";
 
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+
 import './Lobby.css';
 import Layout from 'views/layout';
 import socket from 'Socket'
@@ -17,10 +20,8 @@ const Lobby = ({location}) => {
     // filters
     const [genreIds, setGenreIds] = useState(null);
     const [genre, setGenre] = useState('all');
-    const [minIrate, setMinIrate] = useState(0);
-    const [maxIrate, setMaxIrate] = useState(10);
-    const [minNrate, setMinNrate] = useState(0);
-    const [maxNrate, setMaxNrate] = useState(5);
+    const [sliderIrate, setSliderIrate] = useState([0, 10]);
+    const [sliderNrate, setSliderNrate] = useState([0, 5]);
 
     const createGenreDropdown = () => {
         let genres = [];
@@ -33,7 +34,7 @@ const Lobby = ({location}) => {
     const onClickStartSession = () => {
         // TODO emit a specific user instead of the first of the user array
         console.log(users[0])
-        const filters = {genre: genre, genreId: genreIds[genre][0], minIrate:minIrate, maxIrate:maxIrate,  minNrate:minNrate, maxNrate:maxNrate};
+        const filters = {genre: genre, genreId: genreIds[genre][0], minIrate:sliderIrate[0], maxIrate:sliderIrate[1],  minNrate:sliderNrate[0], maxNrate:sliderNrate[1]};
         socket.emit('begin', users[0], filters, (error) => {
             if (error) {
                 alert(error);
@@ -147,6 +148,13 @@ const Lobby = ({location}) => {
                 { name === hostName && genreIds !== null?
                     <div className="lobbyContainer">
                     <h1>Filter by:</h1>
+                    { genre !== 'all' || sliderIrate[0] >= 4 || sliderNrate[0] >= 2 ?
+                        <div>
+                        <Typography variant="body1" gutterBottom>
+                            Note: This combination of filters might give you no movies!
+                        </Typography>
+                        </div> : null
+                    }
                     <label>
                         Genre:
                         <select value={genre} onChange={(event) => {setGenre(event.target.value)}}>
@@ -154,28 +162,34 @@ const Lobby = ({location}) => {
                         </select>
                     </label>
                     <div>
-                        <label>
-                            Minimum IMDB rating (out of 10)
-                            <input placeholder="0" type="text" onChange={(event) => setMinIrate(event.target.value)} />
-                        </label>
+                    <Typography id="range-slider" gutterBottom>
+                        IMDB Rating range
+                    </Typography>
+                    <Slider
+                        aria-labelledby="range-slider"
+                        valueLabelDisplay="auto"
+                        marks={true}
+                        step={1}
+                        min={0}
+                        max={10}
+                        value={sliderIrate}
+                        onChange={(event, newValue) => {setSliderIrate(newValue)}}
+                    />
                     </div>
                     <div>
-                        <label>
-                            Maximum IMDB rating (out of 10)
-                            <input placeholder="10" type="text" onChange={(event) => setMaxIrate(event.target.value)} />
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            Minimum Netflix rating (out of 5)
-                            <input placeholder="0" type="text" onChange={(event) => setMinNrate(event.target.value)} />
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            Maximum Netflix rating (out of 5)
-                            <input placeholder="5" type="text" onChange={(event) => setMaxNrate(event.target.value)} />
-                        </label>
+                    <Typography id="range-slider" gutterBottom>
+                        Netflix Rating range
+                    </Typography>
+                    <Slider
+                        aria-labelledby="range-slider"
+                        valueLabelDisplay="auto"
+                        marks={true}
+                        step={1}
+                        min={0}
+                        max={5}
+                        value={sliderNrate}
+                        onChange={(event, newValue) => {setSliderNrate(newValue)}}
+                    />
                     </div>
                     </div> : null
                 }
@@ -186,5 +200,5 @@ const Lobby = ({location}) => {
     );
   }
 
-  export default Lobby
+  export default Lobby;
   
