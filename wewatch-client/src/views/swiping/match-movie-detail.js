@@ -4,7 +4,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import BrushIcon from '@material-ui/icons/Brush';
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
-import _ from 'underscore'
+import _ from 'underscore';
 
 import theme from 'styles/theme';
 import StyledDiv from 'styles/styled-div';

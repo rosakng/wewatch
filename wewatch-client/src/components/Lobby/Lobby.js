@@ -103,7 +103,7 @@ const Lobby = ({location}) => {
     return (
         <Layout>
             <div className="outerContainer">
-                <div className="container">
+                <div className= "lobbyContainer">
                     <h1>Welcome to {hostName}'s Lobby</h1>
                     <h2>Lobby ID: {roomId} </h2>
                     <h2>In the lobby:</h2>
@@ -139,7 +139,7 @@ const Lobby = ({location}) => {
                     }
                 </div>
                 { name === hostName && genreIds !== null?
-                    <div className="container">
+                    <div className="lobbyContainer">
                     <h1>Filter by:</h1>
                     <label>
                         Genre:
